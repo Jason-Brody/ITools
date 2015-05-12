@@ -66,7 +66,7 @@ namespace ITools
             _app = null;
             try
             {
-                _app = SAPTestHelper.GetSAPGuiApp();
+                _app = SAPTestHelper.GetSAPGuiApp(1);
                 List<SAPSessionVM> sessions = new List<SAPSessionVM>();
                 for (int i = 0; i < _app.Children.Count; i++)
                 {

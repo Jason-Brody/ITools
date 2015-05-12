@@ -32,12 +32,15 @@ namespace ITools
         private int _maxCount;
         private GuiVComponent _lastHighlight;
         XmlDocument xDoc;
+        private bool _isExpand = false;
 
         public SAPComponents()
         {
             InitializeComponent();
             (App.Current.MainWindow as MainWindow).OnSetSession += SAPComponents_OnSetSession;
             this.IsEnabled = false;
+
+
         }
 
         void SAPComponents_OnSetSession(GuiSession session)
@@ -52,11 +55,11 @@ namespace ITools
         private async void btn_ShowAll_Click(object sender, RoutedEventArgs e)
         {
             _lastHighlight = null;
-            xDoc = new XmlDocument();
+           
             try
             {
-                
-                    
+                _isExpand = false;
+                xDoc = new XmlDocument();
                 XmlElement root = xDoc.CreateElement("Node");
                 root.SetAttribute("name", "root");
                 Task loopNodeTask = new Task(() =>
@@ -90,6 +93,7 @@ namespace ITools
             newItem.SetAttribute("id", comp.Comp.Id);
             newItem.SetAttribute("type", comp.Comp.Type);
             newItem.SetAttribute("num", count.ToString());
+            newItem.SetAttribute("isExpand", _isExpand.ToString());
             if (comp.Comp is GuiVComponent)
             {
                 try
@@ -129,7 +133,7 @@ namespace ITools
             if (tv_Elements.SelectedItem != null)
             {
                 XmlElement root = tv_Elements.SelectedItem as XmlElement;
-                XmlElement rootCopy = root.Clone() as XmlElement;
+                //XmlElement rootCopy = root.Clone() as XmlElement;
                 string id = root.GetAttribute("id");
                 GuiComponent cp = SAPAutomationHelper.Current.GetSAPComponentById<GuiComponent>(id);
                 WrapComp comp = new WrapComp() { Comp = cp };
@@ -150,17 +154,30 @@ namespace ITools
 
         private void tv_Elements_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            if (tv_Elements.SelectedItem == null)
-                mi_Load.IsEnabled = false;
+            if (tv_Elements.SelectedItem != null)
+            {
+                XmlElement root = tv_Elements.SelectedItem as XmlElement;
+                int count = int.Parse( root.GetAttribute("num"));
+                if(count > root.ChildNodes.Count)
+                {
+                    mi_Load.IsEnabled = true;
+                }
+                else
+                {
+                    mi_Load.IsEnabled = false;
+                }
+            }
             else
-                mi_Load.IsEnabled = true;
+                mi_Load.IsEnabled = false;
+                
 
         }
 
         private void tv_Elements_MouseMove(object sender, MouseEventArgs e)
         {
-            if (tv_Elements.SelectedItem != null && e.LeftButton == MouseButtonState.Pressed)
+            if (tv_Elements.SelectedItem != null && e.LeftButton == MouseButtonState.Pressed && e.OriginalSource.GetType() == typeof(TextBlock))
             {
+
                 XmlElement element = tv_Elements.SelectedItem as XmlElement;
                 SapCompInfo ci = new SapCompInfo();
                 ci.Id = element.GetAttribute("id");
@@ -180,6 +197,7 @@ namespace ITools
                         provider.GenerateCodeFromExpression(ci.FindMethod, sourceWriter, options);
                     }
                     DragDrop.DoDragDrop(tv_Elements, sb.ToString(), DragDropEffects.Copy);
+                    e.Handled = true;
                 }
                 catch
                 {
@@ -194,7 +212,7 @@ namespace ITools
             if (tv_Elements.SelectedItem != null)
             {
                 XmlElement root = tv_Elements.SelectedItem as XmlElement;
-                XmlElement rootCopy = root.Clone() as XmlElement;
+                //XmlElement rootCopy = root.Clone() as XmlElement;
                 string id = root.GetAttribute("id");
                 GuiComponent cp = SAPAutomationHelper.Current.GetSAPComponentById<GuiComponent>(id);
                 WrapComp comp = new WrapComp() { Comp = cp };
@@ -289,7 +307,46 @@ namespace ITools
 
         private void btn_Spy_Click(object sender, RoutedEventArgs e)
         {
+            App.Current.MainWindow.WindowState = WindowState.Minimized;
+            _isExpand = true;
+            SAPAutomationHelper.Current.SetVisualMode(true);
+            SAPAutomationHelper.Current.Spy((c) =>
+            {
+                displayData(c);
+                GuiComponent cp = c.Comp;
+                Stack<GuiComponent> comps = new Stack<GuiComponent>();
+                do
+                {
+                    comps.Push(cp);
+                    cp = cp.Parent;
 
+                }
+                while ((cp is GuiConnection) == false);
+                xDoc = new XmlDocument();
+
+                XmlElement root = xDoc.CreateElement("Node");
+                root.SetAttribute("name", "root");
+                var firstComp = comps.Pop();
+                XmlElement temp = addNode(new WrapComp() { Comp = firstComp }, root, 1);
+
+
+                while (comps.Count > 0)
+                {
+                    temp = addNode(new WrapComp() { Comp = comps.Pop() }, temp, 1);
+                }
+                xDoc.AppendChild(root.FirstChild);
+
+                tv_Elements.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    tv_Elements.DataContext = xDoc;
+                    SAPAutomationHelper.Current.SetVisualMode(false);
+                    App.Current.MainWindow.WindowState = WindowState.Normal;
+                    
+                }));
+
+
+
+            });
         }
     }
 }
