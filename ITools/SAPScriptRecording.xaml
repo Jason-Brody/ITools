@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="ITools.SAPScriptRecording"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             xmlns:this="clr-namespace:ITools"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:reflection="clr-namespace:System.Reflection;assembly=mscorlib"
+             xmlns:cv="clr-namespace:ITools.Converters"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <ObjectDataProvider MethodName="GetValues" ObjectType="{x:Type sys:Enum}" x:Key="RecordAction">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="reflection:BindingFlags"/>
+            </ObjectDataProvider.MethodParameters>
+            
+        </ObjectDataProvider>
+        <cv:ParameterConverter x:Key="ParameterConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Margin="0,5">
+            <Button Content="Start Recording" x:Name="btn_Record" Click="btn_Record_Click"/>
+            <Button Content="Stop Recording" x:Name="btn_Stop" Click="btn_Stop_Click"/>
+            <Button Content="Run All Steps" x:Name="btn_Run" Click="btn_Run_Click"/>
+        </StackPanel>
+        <DataGrid Grid.Row="1" x:Name="dg_Step" ItemsSource="{Binding}" AutoGenerateColumns="False" SelectionMode="Extended"
+                  PreviewMouseLeftButtonDown="dg_Step_PreviewMouseLeftButtonDown"
+                  CanUserAddRows="False"
+                  MouseMove="dg_Step_MouseMove">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Run" x:Name="mi_Run" Click="mi_Run_Click"/>
+                    <MenuItem Header="Generate C# Code" x:Name="mi_CSharp" IsEnabled="False"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Step Id" Binding="{Binding StepId,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                <DataGridComboBoxColumn Header="Action" ItemsSource="{Binding Source={StaticResource RecordAction}}" SelectedItemBinding="{Binding Action}" Width="*"/>
+                <DataGridTextColumn Header="Comp Id" Binding="{Binding CompInfo.Id}" Width="4*"/>
+                <DataGridTextColumn Header="Comp Name" Binding="{Binding CompInfo.Name}" Width="*"/>
+                <DataGridTextColumn Header="Comp Type" Binding="{Binding CompInfo.Type}" Width="*"/>
+                <DataGridTextColumn Header="Action Name" Binding="{Binding ActionName}" Width="*"/>
+                <DataGridTextColumn Header="Parameter" Binding="{Binding ActionParams,Converter={StaticResource ParameterConverter}}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
