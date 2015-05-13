@@ -21,7 +21,7 @@ using SAPFEWSELib;
 namespace ITools
 {
     public delegate void OnSessionSettingHanlder(GuiSession session);
-    public delegate void OnWorkingHanlder(object sender,WorkingEventArgs e);
+    
 
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -37,7 +37,7 @@ namespace ITools
         {
             InitializeComponent();
             SAPAutomationHelper.Current.SetSAPApiAssembly();
-            hookWorkingEvent();
+            
         }
 
         private void hookWorkingEvent()
@@ -48,14 +48,42 @@ namespace ITools
                 foreach(IWorking c in ctls)
                 {
                     c.OnWorking += c_OnWorking;
+                    c.AfterWorking += c_AfterWorking;
                 }
             }
         }
 
+        void c_AfterWorking(object sender, EventArgs e)
+        {
+            this.IsEnabled = true;
+            if (pb.IsIndeterminate)
+                pb.IsIndeterminate = false;
+            pb.Value = 0;
+        }
+
         void c_OnWorking(object sender, WorkingEventArgs e)
         {
-            this.IsEnabled = false;
-            pb.IsIndeterminate = true;
+            GuiVComponent vc = new GuiVComponent();
+            
+            this.Dispatcher.BeginInvoke(new Action(() => {
+                if (this.IsEnabled)
+                    this.IsEnabled = false;
+            }));
+
+            pb.Dispatcher.BeginInvoke(new Action(() => {
+                if (!e.IsProcessKnow && pb.IsIndeterminate == false)
+                {
+                    pb.IsIndeterminate = true; ;
+                }
+                else
+                {
+                    pb.Value = e.Current;
+                    pb.Maximum = e.Max;
+                }
+            }));
+
+            
+            
         }
 
         private IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
@@ -132,6 +160,15 @@ namespace ITools
         {
             lv_Sessions.ItemsSource = null;
         }
+
+      
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            hookWorkingEvent();
+        }
+
+        
 
         
 

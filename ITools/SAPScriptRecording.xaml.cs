@@ -92,17 +92,39 @@ namespace ITools
             SAPAutomationHelper.Current.StopRecording();
         }
 
-        private void mi_Run_Click(object sender, RoutedEventArgs e)
+        private async void mi_Run_Click(object sender, RoutedEventArgs e)
         {
-            SAPAutomationHelper.Current.StopRecording();
-            setRecordStatus(false);
             if (dg_Step.SelectedItems != null)
             {
-                foreach (RecordStep step in dg_Step.SelectedItems)
+                SAPAutomationHelper.Current.StopRecording();
+                setRecordStatus(false);
+                var runSteps = dg_Step.SelectedItems.Cast<RecordStep>();
+                await Task.Run(() =>
                 {
-                    SAPAutomationHelper.Current.RunAction(step);
-                }
+                    WorkingEventArgs ae = new WorkingEventArgs();
+                    ae.IsProcessKnow = true;
+                    ae.Max = runSteps.Count();
+
+                    for (int i = 0; i < runSteps.Count(); i++)
+                    {
+                        ae.Current = i + 1;
+                        SAPAutomationHelper.Current.RunAction(runSteps.ElementAt(i));
+                        if(OnWorking!=null)
+                        {
+                            OnWorking(this, ae);
+                        }
+                    }
+
+                });
+                if (AfterWorking != null)
+                    AfterWorking(this, null);
+
             }
+           
+
+            
+            
+            
         }
 
       
@@ -118,13 +140,13 @@ namespace ITools
 
         private void dg_Step_MouseMove(object sender, MouseEventArgs e)
         {
-            
-            if (mySteps != null && mySteps.Count > 0 && e.LeftButton == MouseButtonState.Pressed )
-            {
 
+            if (mySteps != null && mySteps.Count > 0 && e.LeftButton == MouseButtonState.Pressed && e.OriginalSource.GetType() != typeof(System.Windows.Controls.Primitives.Thumb))
+            {
+                var source = e;
                 //if (p.X > 0 && p.Y > 0 && p.X < dg.ActualWidth && p.Y < dg.ActualHeight)
                 //    return;
-
+                
                 CodeMemberMethod runMethod = new CodeMemberMethod();
                 runMethod.Attributes = MemberAttributes.Static | MemberAttributes.Public;
                 runMethod.Name = "recordAction";
@@ -154,11 +176,12 @@ namespace ITools
             
         }
 
-        public event OnWorkingHanlder OnWorking;
 
-        private void btn_Run_Click(object sender, RoutedEventArgs e)
-        {
-            OnWorking(this, null);
-        }
+
+
+
+        public event OnWorkingHandler OnWorking;
+
+        public event OnWorkFinishHandler AfterWorking;
     }
 }

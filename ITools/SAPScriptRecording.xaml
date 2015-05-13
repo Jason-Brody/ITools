@@ -26,7 +26,7 @@
         <StackPanel Orientation="Horizontal" Margin="0,5">
             <Button Content="Start Recording" x:Name="btn_Record" Click="btn_Record_Click"/>
             <Button Content="Stop Recording" x:Name="btn_Stop" Click="btn_Stop_Click"/>
-            <Button Content="Run All Steps" x:Name="btn_Run" Click="btn_Run_Click"/>
+            <!--<Button Content="Run All Steps" x:Name="btn_Run" Click="btn_Run_Click"/>-->
         </StackPanel>
         <DataGrid Grid.Row="1" x:Name="dg_Step" ItemsSource="{Binding}" AutoGenerateColumns="False" SelectionMode="Extended"
                   PreviewMouseLeftButtonDown="dg_Step_PreviewMouseLeftButtonDown"

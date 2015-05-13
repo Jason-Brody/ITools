@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace ITools
 {
+    public delegate void OnWorkingHandler(object sender, WorkingEventArgs e);
+    public delegate void OnWorkFinishHandler(object sender,EventArgs e);
     interface IWorking
     {
-        event OnWorkingHanlder OnWorking;
+        event OnWorkingHandler OnWorking;
+
+        event OnWorkFinishHandler AfterWorking;
     }
 
     public class WorkingEventArgs:EventArgs
