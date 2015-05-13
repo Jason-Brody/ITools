@@ -4,6 +4,12 @@
         xmlns:this="clr-namespace:ITools"
     
         Title="MainWindow" Height="800" Width="1280">
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="MinWidth" Value="150"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -13,9 +19,10 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
-            
         </Grid.RowDefinitions>
 
         <Expander x:Name="ep_Session" ExpandDirection="Down" Header="Select Session" Grid.ColumnSpan="4" Expanded="ep_Session_Expanded" Collapsed="ep_Session_Collapsed">
@@ -66,6 +73,8 @@
             <this:SAPComponents/>
         </GroupBox>
 
-        <ProgressBar x:Name="pb" Grid.Row="2" Grid.ColumnSpan="4" IsIndeterminate="True" Height="5"/> 
+        <GridSplitter Height="3" Grid.Row="2" ShowsPreview="True" Grid.ColumnSpan="4" HorizontalAlignment="Stretch"  Background="Black"/>
+        <this:SAPScriptRecording Grid.Row="3" Grid.ColumnSpan="4"/>
+        <ProgressBar x:Name="pb" Grid.Row="4" Grid.ColumnSpan="4" Height="5"/> 
     </Grid>
 </Window>

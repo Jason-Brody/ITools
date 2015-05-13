@@ -39,8 +39,6 @@ namespace ITools
             InitializeComponent();
             (App.Current.MainWindow as MainWindow).OnSetSession += SAPComponents_OnSetSession;
             this.IsEnabled = false;
-
-
         }
 
         void SAPComponents_OnSetSession(GuiSession session)
@@ -249,6 +247,7 @@ namespace ITools
                 {
                     SAPElementProperty prop = new SAPElementProperty();
                     prop.Name = p.Name;
+                    prop.IsReadOnly = !p.CanWrite;
                     try
                     {
                         prop.Value = p.GetValue(c.Comp).ToString();

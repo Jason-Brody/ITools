@@ -61,8 +61,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\ParameterConverter.cs" />
+    <Compile Include="IWorking.cs" />
+    <Compile Include="SAPBaseControl.cs" />
     <Compile Include="SAPComponents.xaml.cs">
       <DependentUpon>SAPComponents.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SAPScriptRecording.xaml.cs">
+      <DependentUpon>SAPScriptRecording.xaml</DependentUpon>
     </Compile>
     <Compile Include="SAPSessionInfo.xaml.cs">
       <DependentUpon>SAPSessionInfo.xaml</DependentUpon>
@@ -85,6 +91,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SAPScriptRecording.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SAPSessionInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -136,6 +146,9 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MyWindow\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

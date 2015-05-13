@@ -21,6 +21,7 @@ using SAPFEWSELib;
 namespace ITools
 {
     public delegate void OnSessionSettingHanlder(GuiSession session);
+    public delegate void OnWorkingHanlder(object sender,WorkingEventArgs e);
 
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -28,6 +29,7 @@ namespace ITools
     public partial class MainWindow : Window
     {
         public event OnSessionSettingHanlder OnSetSession;
+        
 
         private GuiSession _session;
         private GuiApplication _app;
@@ -35,6 +37,45 @@ namespace ITools
         {
             InitializeComponent();
             SAPAutomationHelper.Current.SetSAPApiAssembly();
+            hookWorkingEvent();
+        }
+
+        private void hookWorkingEvent()
+        {
+            var ctls = FindVisualChildren<UserControl>(this);
+            if(ctls != null && ctls.Count() > 0)
+            {
+                foreach(IWorking c in ctls)
+                {
+                    c.OnWorking += c_OnWorking;
+                }
+            }
+        }
+
+        void c_OnWorking(object sender, WorkingEventArgs e)
+        {
+            this.IsEnabled = false;
+            pb.IsIndeterminate = true;
+        }
+
+        private IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+                    if (child != null && child is T && child is IWorking)
+                    {
+                        yield return (T)child;
+                    }
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                    {
+                        yield return childOfChild;
+                    }
+                }
+            }
         }
 
         private void setSession(GuiSession session)

@@ -25,8 +25,8 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
-                <Button Margin="5" x:Name="btn_ShowAll" Click="btn_ShowAll_Click" Content="Get All Components" MinWidth="150" HorizontalAlignment="Center"/>
-                <Button Margin="5" x:Name="btn_Spy" Click="btn_Spy_Click" Content="Spy" MinWidth="150"/>
+                <Button Margin="5" x:Name="btn_ShowAll" Click="btn_ShowAll_Click" Content="Get All Components" HorizontalAlignment="Center"/>
+                <Button Margin="5" x:Name="btn_Spy" Click="btn_Spy_Click" Content="Spy"/>
             </StackPanel>
             <TreeView x:Name="tv_Elements"  ItemsSource="{Binding}"
                       MouseMove="tv_Elements_MouseMove" Grid.Row="1"
@@ -63,6 +63,7 @@
                         <GridView>
                             <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
                             <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}"/>
+                            <GridViewColumn Header="IsReadOnly" DisplayMemberBinding="{Binding IsReadOnly}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
