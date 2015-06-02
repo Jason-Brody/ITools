@@ -17,6 +17,7 @@ using SAPTestRunTime;
 using System.Reflection;
 using ITools.ViewModel;
 using SAPFEWSELib;
+using System.Data;
 
 namespace ITools
 {
@@ -36,8 +37,7 @@ namespace ITools
         public MainWindow()
         {
             InitializeComponent();
-            SAPAutomationHelper.Current.SetSAPApiAssembly();
-            
+            SAPAutomationHelper.Current.SetSAPApiAssembly();            
         }
 
         private void hookWorkingEvent()
@@ -63,7 +63,7 @@ namespace ITools
 
         void c_OnWorking(object sender, WorkingEventArgs e)
         {
-            GuiVComponent vc = new GuiVComponent();
+           
             
             this.Dispatcher.BeginInvoke(new Action(() => {
                 if (this.IsEnabled)
