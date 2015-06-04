@@ -1,4 +1,6 @@
-﻿using SAPFEWSELib;
+﻿using ITools.ViewModel;
+using ITools.Windows;
+using SAPFEWSELib;
 using SAPGuiAutomationLib;
 using System;
 using System.CodeDom;
@@ -18,19 +20,23 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Reflection.Emit;
+using System.Data;
+using System.Reflection;
 
 namespace ITools
 {
     /// <summary>
     /// Interaction logic for SAPScriptRecording.xaml
     /// </summary>
-    public partial class SAPScriptRecording : UserControl,IWorking
+    public partial class SAPScriptRecording : UserControl, IWorking
     {
         ObservableCollection<RecordStep> steps = new ObservableCollection<RecordStep>();
-        private List<RecordStep> mySteps;
+        //private List<RecordStep> mySteps;
         private GuiSession _session;
 
-        
+
+
         public SAPScriptRecording()
         {
             InitializeComponent();
@@ -44,9 +50,10 @@ namespace ITools
 
         void steps_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            for(int i = 0;i<steps.Count ;i++)
+            for (int i = 0; i < steps.Count; i++)
             {
                 steps[i].StepId = i + 1;
+                steps[i].IsParameterize = true;
             }
         }
 
@@ -79,8 +86,10 @@ namespace ITools
             {
                 dg_Step.Dispatcher.BeginInvoke(new Action(() =>
                 {
+                    //Step s = new Step(r);
                     r.ActionName = upperFirstChar(r.ActionName);
                     r.CompInfo.Id = r.CompInfo.Id.Substring(19);
+                  
                     steps.Add(r);
                 }));
             });
@@ -109,7 +118,7 @@ namespace ITools
                     {
                         ae.Current = i + 1;
                         SAPAutomationHelper.Current.RunAction(runSteps.ElementAt(i));
-                        if(OnWorking!=null)
+                        if (OnWorking != null)
                         {
                             OnWorking(this, ae);
                         }
@@ -120,60 +129,60 @@ namespace ITools
                     AfterWorking(this, null);
 
             }
-           
 
-            
-            
-            
+
+
+
+
         }
 
-      
+
 
         private void dg_Step_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            
-            if (dg_Step.SelectedItems != null)
-            {
-                mySteps = dg_Step.SelectedItems.Cast<RecordStep>().ToList();
-            }
+
+            //if (dg_Step.SelectedItems != null)
+            //{
+            //    mySteps = dg_Step.SelectedItems.Cast<RecordStep>().ToList();
+            //}
         }
 
         private void dg_Step_MouseMove(object sender, MouseEventArgs e)
         {
 
-            if (mySteps != null && mySteps.Count > 0 && e.LeftButton == MouseButtonState.Pressed && e.OriginalSource.GetType() != typeof(System.Windows.Controls.Primitives.Thumb))
-            {
-                var source = e;
-                //if (p.X > 0 && p.Y > 0 && p.X < dg.ActualWidth && p.Y < dg.ActualHeight)
-                //    return;
-                
-                CodeMemberMethod runMethod = new CodeMemberMethod();
-                runMethod.Attributes = MemberAttributes.Static | MemberAttributes.Public;
-                runMethod.Name = "recordAction";
+            //if (mySteps != null && mySteps.Count > 0 && e.LeftButton == MouseButtonState.Pressed && e.OriginalSource.GetType() != typeof(System.Windows.Controls.Primitives.Thumb))
+            //{
+            //    var source = e;
+            //    //if (p.X > 0 && p.Y > 0 && p.X < dg.ActualWidth && p.Y < dg.ActualHeight)
+            //    //    return;
 
-                runMethod.Statements.Add(new CodeExpressionStatement(
-                    new CodeMethodInvokeExpression(
-                        new CodeVariableReferenceExpression("SAPTestHelper.Current"),
-                        "SetSession", new CodeExpression[0])));
+            //    CodeMemberMethod runMethod = new CodeMemberMethod();
+            //    runMethod.Attributes = MemberAttributes.Static | MemberAttributes.Public;
+            //    runMethod.Name = "recordAction";
+
+            //    runMethod.Statements.Add(new CodeExpressionStatement(
+            //        new CodeMethodInvokeExpression(
+            //            new CodeVariableReferenceExpression("SAPTestHelper.Current"),
+            //            "SetSession", new CodeExpression[0])));
 
 
-                foreach (RecordStep step in mySteps)
-                {
-                    runMethod.Statements.Add(step.GetCodeDetailStatement());
-                }
+            //    foreach (RecordStep step in mySteps)
+            //    {
+            //        runMethod.Statements.Add(step.GetCodeDetailStatement());
+            //    }
 
-                CodeDomProvider provider = CodeDomProvider.CreateProvider("c#");
-                CodeGeneratorOptions options = new CodeGeneratorOptions();
-                options.BracingStyle = "C";
-                StringBuilder sb = new StringBuilder();
+            //    CodeDomProvider provider = CodeDomProvider.CreateProvider("c#");
+            //    CodeGeneratorOptions options = new CodeGeneratorOptions();
+            //    options.BracingStyle = "C";
+            //    StringBuilder sb = new StringBuilder();
 
-                using (TextWriter sourceWriter = new StringWriter(sb))
-                {
-                    provider.GenerateCodeFromMember(runMethod, sourceWriter, options);
-                }
-                DragDrop.DoDragDrop(dg_Step, sb.ToString(), DragDropEffects.Copy);
-            }
-            
+            //    using (TextWriter sourceWriter = new StringWriter(sb))
+            //    {
+            //        provider.GenerateCodeFromMember(runMethod, sourceWriter, options);
+            //    }
+            //    DragDrop.DoDragDrop(dg_Step, sb.ToString(), DragDropEffects.Copy);
+            //}
+
         }
 
 
@@ -183,5 +192,91 @@ namespace ITools
         public event OnWorkingHandler OnWorking;
 
         public event OnWorkFinishHandler AfterWorking;
+
+        private void mi_CSharp_Click(object sender, RoutedEventArgs e)
+        {
+            CodeMemberMethod runMethod = new CodeMemberMethod();
+            runMethod.Attributes = MemberAttributes.Static | MemberAttributes.Public;
+            runMethod.Name = "recordAction";
+
+            runMethod.Statements.Add(new CodeExpressionStatement(
+                new CodeMethodInvokeExpression(
+                    new CodeVariableReferenceExpression("SAPTestHelper.Current"),
+                    "SetSession", new CodeExpression[0])));
+
+
+            foreach (RecordStep step in dg_Step.SelectedItems.Cast<RecordStep>().ToList())
+            {
+                runMethod.Statements.Add(step.GetCodeDetailStatement());
+            }
+
+            CodeDomProvider provider = CodeDomProvider.CreateProvider("c#");
+            CodeGeneratorOptions options = new CodeGeneratorOptions();
+            options.BracingStyle = "C";
+            StringBuilder sb = new StringBuilder();
+
+            using (TextWriter sourceWriter = new StringWriter(sb))
+            {
+                provider.GenerateCodeFromMember(runMethod, sourceWriter, options);
+            }
+
+            Clipboard.SetData(DataFormats.Text, sb.ToString());
+        }
+
+        private void mi_HightLight_Click(object sender, RoutedEventArgs e)
+        {
+            //var data = dg_Step.SelectedItem;
+            //var dgr = dg_Step.ItemContainerGenerator.ContainerFromItem(data) as DataGridRow;
+            //var backgroud = dgr.Background;
+            //if (dg_Step.SelectedItems != null)
+            //{
+            //    foreach (var row in dg_Step.SelectedItems)
+            //    {
+            //        var dgr = dg_Step.ItemContainerGenerator.ContainerFromItem(row) as DataGridRow;
+            //        dgr.Background = new SolidColorBrush(Colors.GreenYellow);
+            //    }
+            //}
+        }
+
+        private void mi_Test_Click(object sender, RoutedEventArgs e)
+        {
+            if (dg_Step.SelectedItem != null)
+            {
+                List<SAPDataParameter> paras = new List<SAPDataParameter>();
+                ParameterWindow win = new ParameterWindow(dg_Step.SelectedItems.Cast<RecordStep>(), paras);
+                win.ShowDialog();
+
+
+                DataTable dt = createTable(paras);
+                dg_Parameter.DataContext = dt;
+            }
+
+            //CodeTypeMember typeMember = SAPAutomationExtension.GetDataClass("Test", paras);
+            //CodeHelper.GetCode<CodeTypeMember>(typeMember, p => p.GenerateCodeFromMember);
+
+
+        }
+
+        private DataTable createTable(List<SAPDataParameter> parameters)
+        {
+            DataTable dt = new DataTable();
+            foreach (var p in parameters)
+            {
+                DataColumn dc = new DataColumn(p.Name, p.Type);
+                dt.Columns.Add(dc);
+            }
+            DataRow dr = dt.NewRow();
+            foreach (var p in parameters)
+            {
+                dr[p.Name] = p.Value;
+            }
+            dt.Rows.Add(dr);
+            return dt;
+        }
+
+        private void mi_Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            dg_Step.DataContext = steps;
+        }
     }
 }

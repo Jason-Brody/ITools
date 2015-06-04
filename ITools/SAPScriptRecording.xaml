@@ -17,8 +17,10 @@
             
         </ObjectDataProvider>
         <cv:ParameterConverter x:Key="ParameterConverter"/>
+        <cv:RowBackgroundConverter x:Key="RowBackgroundConverter"/>
     </UserControl.Resources>
     <Grid>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -35,25 +37,51 @@
             <Button Content="Stop Recording" x:Name="btn_Stop" Click="btn_Stop_Click"/>
             <!--<Button Content="Run All Steps" x:Name="btn_Run" Click="btn_Run_Click"/>-->
         </StackPanel>
-        <DataGrid Grid.Row="1" Grid.Column="1" x:Name="dg_Step" ItemsSource="{Binding}" AutoGenerateColumns="False" SelectionMode="Extended"
+        <TabControl Grid.Row="1" Grid.Column="1">
+            <TabControl.Items>
+                <TabItem Header="Script">
+                    <DataGrid x:Name="dg_Step" ItemsSource="{Binding}" AutoGenerateColumns="False" SelectionMode="Extended"
                   PreviewMouseLeftButtonDown="dg_Step_PreviewMouseLeftButtonDown"
                   CanUserAddRows="False"
                   MouseMove="dg_Step_MouseMove">
-            <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Run" x:Name="mi_Run" Click="mi_Run_Click"/>
-                    <MenuItem Header="Generate C# Code" x:Name="mi_CSharp" IsEnabled="False"/>
-                </ContextMenu>
-            </DataGrid.ContextMenu>
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Step Id" Binding="{Binding StepId,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
-                <DataGridComboBoxColumn Header="Action" ItemsSource="{Binding Source={StaticResource RecordAction}}" SelectedItemBinding="{Binding Action}" Width="*"/>
-                <DataGridTextColumn Header="Comp Id" Binding="{Binding CompInfo.Id}" Width="4*"/>
-                <DataGridTextColumn Header="Comp Name" Binding="{Binding CompInfo.Name}" Width="*"/>
-                <DataGridTextColumn Header="Comp Type" Binding="{Binding CompInfo.Type}" Width="*"/>
-                <DataGridTextColumn Header="Action Name" Binding="{Binding ActionName}" Width="*"/>
-                <DataGridTextColumn Header="Parameter" Binding="{Binding ActionParams,Converter={StaticResource ParameterConverter}}" Width="*"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsParameterize,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                        <Setter Property="Background" Value="GreenYellow"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsParameterize,UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                        <Setter Property="Background" Value="White"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Run" x:Name="mi_Run" Click="mi_Run_Click"/>
+                                <MenuItem Header="Generate C# Code" x:Name="mi_CSharp" Click="mi_CSharp_Click"/>
+                                <MenuItem Header="Highlight" x:Name="mi_HightLight" Click="mi_HightLight_Click"/>
+                                <MenuItem Header="Test" x:Name="mi_Test" Click="mi_Test_Click"/>
+                                <MenuItem Header="Refresh" x:Name="mi_Refresh" Click="mi_Refresh_Click"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Step Id" Binding="{Binding StepId,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                            <DataGridComboBoxColumn Header="Action" ItemsSource="{Binding Source={StaticResource RecordAction}}" SelectedItemBinding="{Binding Action}" Width="*"/>
+                            <DataGridTextColumn Header="Comp Id" Binding="{Binding CompInfo.Id}" Width="4*"/>
+                            <!--<DataGridTextColumn Header="Comp Name" Binding="{Binding CompInfo.Name}" Width="*"/>-->
+                            <DataGridTextColumn Header="Comp Type" Binding="{Binding CompInfo.Type}" Width="*"/>
+                            <DataGridTextColumn Header="Action Name" Binding="{Binding ActionName}" Width="*"/>
+                            <DataGridTextColumn Header="Parameter" Binding="{Binding ActionParams,Converter={StaticResource ParameterConverter}}" Width="*"/>
+                            <DataGridCheckBoxColumn Header="IsParameterize"  Binding="{Binding IsParameterize,UpdateSourceTrigger=PropertyChanged}" IsThreeState="False"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+                <TabItem Header="Parameters">
+                    <DataGrid x:Name="dg_Parameter" ItemsSource="{Binding}"/>
+                </TabItem>
+            </TabControl.Items>
+        </TabControl>
+        
     </Grid>
 </UserControl>

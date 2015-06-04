@@ -181,7 +181,7 @@ namespace ITools
                 ci.Id = element.GetAttribute("id");
                 ci.Type = element.GetAttribute("type");
                 ci.Name = element.GetAttribute("name");
-                ci.FindMethod = ci.GetFindCode();
+                ci.FindMethod = ci.FindByNameCode();
 
                 CodeDomProvider provider = CodeDomProvider.CreateProvider("c#");
                 CodeGeneratorOptions options = new CodeGeneratorOptions();

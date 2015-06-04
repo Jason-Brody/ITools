@@ -61,7 +61,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CodeHelper.cs" />
     <Compile Include="Converters\ParameterConverter.cs" />
+    <Compile Include="Converters\ParameterTypeConverter.cs" />
+    <Compile Include="Converters\RowBackgroundConverter.cs" />
     <Compile Include="IWorking.cs" />
     <Compile Include="SAPBaseControl.cs" />
     <Compile Include="SAPComponents.xaml.cs">
@@ -73,8 +76,14 @@
     <Compile Include="SAPSessionInfo.xaml.cs">
       <DependentUpon>SAPSessionInfo.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ScriptTemplate.cs" />
     <Compile Include="ViewModel\SAPElementProperty.cs" />
     <Compile Include="ViewModel\SAPSessionVM.cs" />
+    <Compile Include="ViewModel\Step.cs" />
+    <Compile Include="Windows\ParameterWindow.xaml.cs">
+      <DependentUpon>ParameterWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WPFNotify.cs" />
     <Page Include="SAPComponents.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -96,6 +105,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SAPSessionInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\ParameterWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
