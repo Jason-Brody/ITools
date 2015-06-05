@@ -14,13 +14,18 @@
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="reflection:BindingFlags"/>
             </ObjectDataProvider.MethodParameters>
-            
+
         </ObjectDataProvider>
         <cv:ParameterConverter x:Key="ParameterConverter"/>
-        <cv:RowBackgroundConverter x:Key="RowBackgroundConverter"/>
+        <cv:VisiblityToBooleanConverter x:Key="VisiblityToBooleanConverter"/>
+        <DataTemplate x:Key="ExpandDetails">
+            <ToggleButton Name="ShowDetails" IsThreeState="False" 
+                          IsChecked="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow},Path=DetailsVisibility,Converter={StaticResource VisiblityToBooleanConverter},Mode=TwoWay}"
+                          Margin="4"/>
+        </DataTemplate>
     </UserControl.Resources>
     <Grid>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -30,7 +35,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TreeView x:Name="tv_Case" Grid.RowSpan="2">
-            
+
         </TreeView>
         <StackPanel Orientation="Horizontal" Margin="0,5" Grid.Column="1">
             <Button Content="Start Recording" x:Name="btn_Record" Click="btn_Record_Click"/>
@@ -40,48 +45,79 @@
         <TabControl Grid.Row="1" Grid.Column="1">
             <TabControl.Items>
                 <TabItem Header="Script">
-                    <DataGrid x:Name="dg_Step" ItemsSource="{Binding}" AutoGenerateColumns="False" SelectionMode="Extended"
-                  PreviewMouseLeftButtonDown="dg_Step_PreviewMouseLeftButtonDown"
-                  CanUserAddRows="False"
-                  MouseMove="dg_Step_MouseMove">
+                    <DataGrid x:Name="dg_Step" 
+                              ItemsSource="{Binding}" 
+                              AutoGenerateColumns="False"  
+                              
+                              CanUserAddRows="False">
                         <DataGrid.Resources>
                             <Style TargetType="DataGridRow">
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsParameterize,UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                    <DataTrigger Binding="{Binding IsParameterize}" Value="True">
                                         <Setter Property="Background" Value="GreenYellow"/>
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsParameterize,UpdateSourceTrigger=PropertyChanged}" Value="False">
-                                        <Setter Property="Background" Value="White"/>
-                                    </DataTrigger>
                                 </Style.Triggers>
+
+                                <Setter Property="DetailsVisibility" Value="Collapsed"/>
+
                             </Style>
+
                         </DataGrid.Resources>
+                        <DataGrid.RowDetailsTemplate>
+                            <DataTemplate>
+                                <DataGrid AutoGenerateColumns="False" Margin="10,0,0,0" CanUserSortColumns="False" CanUserReorderColumns="False"
+                                     ItemsSource="{Binding ActionParams}" CanUserAddRows="False" CanUserDeleteRows="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Parameter Name" Binding="{Binding Name}" />
+                                        <DataGridTextColumn Header="Parameter Type" Binding="{Binding Type}"  IsReadOnly="True"/>
+                                        <DataGridTextColumn Header="Parameter Value" Binding="{Binding Value}" />
+                                        <DataGridTextColumn Header="Comment" Binding="{Binding Comment}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </DataTemplate>
+                        </DataGrid.RowDetailsTemplate>
                         <DataGrid.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Run" x:Name="mi_Run" Click="mi_Run_Click"/>
                                 <MenuItem Header="Generate C# Code" x:Name="mi_CSharp" Click="mi_CSharp_Click"/>
-                                <MenuItem Header="Highlight" x:Name="mi_HightLight" Click="mi_HightLight_Click"/>
-                                <MenuItem Header="Test" x:Name="mi_Test" Click="mi_Test_Click"/>
-                                <MenuItem Header="Refresh" x:Name="mi_Refresh" Click="mi_Refresh_Click"/>
+                                <MenuItem Header="Run Selected Steps" x:Name="mi_Run" Click="mi_Run_Click"/>
+                                
+                                <MenuItem Header="Run All Steps" x:Name="mi_RunAll" Click="mi_RunAll_Click"/>
+                                
+                                <MenuItem Header="Run All Steps With Parameters" x:Name="mi_RunAllWithP" Click="mi_RunAllWithP_Click"/>
+                                
+                                
                             </ContextMenu>
                         </DataGrid.ContextMenu>
                         <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="" CellTemplate="{StaticResource ExpandDetails}" Width="30"/>
                             <DataGridTextColumn Header="Step Id" Binding="{Binding StepId,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
-                            <DataGridComboBoxColumn Header="Action" ItemsSource="{Binding Source={StaticResource RecordAction}}" SelectedItemBinding="{Binding Action}" Width="*"/>
-                            <DataGridTextColumn Header="Comp Id" Binding="{Binding CompInfo.Id}" Width="4*"/>
+                            <DataGridComboBoxColumn Header="Action" IsReadOnly="True" ItemsSource="{Binding Source={StaticResource RecordAction}}" SelectedItemBinding="{Binding Action}" Width="*"/>
+                            <DataGridTextColumn Header="Comp Id" IsReadOnly="True" Binding="{Binding CompInfo.Id}" Width="4*"/>
                             <!--<DataGridTextColumn Header="Comp Name" Binding="{Binding CompInfo.Name}" Width="*"/>-->
-                            <DataGridTextColumn Header="Comp Type" Binding="{Binding CompInfo.Type}" Width="*"/>
-                            <DataGridTextColumn Header="Action Name" Binding="{Binding ActionName}" Width="*"/>
-                            <DataGridTextColumn Header="Parameter" Binding="{Binding ActionParams,Converter={StaticResource ParameterConverter}}" Width="*"/>
-                            <DataGridCheckBoxColumn Header="IsParameterize"  Binding="{Binding IsParameterize,UpdateSourceTrigger=PropertyChanged}" IsThreeState="False"/>
+                            <DataGridTextColumn Header="Comp Type" IsReadOnly="True" Binding="{Binding CompInfo.Type}" Width="*"/>
+                            <DataGridTextColumn Header="Action Name" IsReadOnly="True" Binding="{Binding ActionName}" Width="*"/>
+                            <!--<DataGridTextColumn Header="Parameter" Binding="{Binding ActionParams,Converter={StaticResource ParameterConverter}}" Width="*"/>-->
+                            <DataGridTemplateColumn Header="IsParameterize">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox 
+                                            IsThreeState="False" HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center" 
+                                            Checked="CheckBox_Checked"
+                                            Unchecked="CheckBox_Unchecked"
+                                            IsChecked="{Binding IsParameterize,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <!--<DataGridCheckBoxColumn Header="IsParameterize" Binding="{Binding IsParameterize}" IsThreeState="False"/>-->
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
                 <TabItem Header="Parameters">
-                    <DataGrid x:Name="dg_Parameter" ItemsSource="{Binding}"/>
+                    <DataGrid x:Name="dg_Parameter" />
                 </TabItem>
             </TabControl.Items>
         </TabControl>
-        
+
     </Grid>
 </UserControl>

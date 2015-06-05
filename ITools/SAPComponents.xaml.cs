@@ -89,7 +89,7 @@ namespace ITools
             XmlElement newItem = xDoc.CreateElement("Node");
             newItem.SetAttribute("name", comp.Comp.Name);
             newItem.SetAttribute("id", comp.Comp.Id);
-            newItem.SetAttribute("type", comp.Comp.Type);
+            newItem.SetAttribute("type", SAPAutomationExtension.GetDetailType(comp.Comp));
             newItem.SetAttribute("num", count.ToString());
             newItem.SetAttribute("isExpand", _isExpand.ToString());
             if (comp.Comp is GuiVComponent)

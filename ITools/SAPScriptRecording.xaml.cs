@@ -34,12 +34,13 @@ namespace ITools
         ObservableCollection<RecordStep> steps = new ObservableCollection<RecordStep>();
         //private List<RecordStep> mySteps;
         private GuiSession _session;
-
+        private DataTable _parameterTable;
 
 
         public SAPScriptRecording()
         {
             InitializeComponent();
+            _parameterTable = new DataTable();
             (App.Current.MainWindow as MainWindow).OnSetSession += SAPScriptRecording_OnSetSession;
             dg_Step.DataContext = steps;
             this.IsEnabled = false;
@@ -53,8 +54,20 @@ namespace ITools
             for (int i = 0; i < steps.Count; i++)
             {
                 steps[i].StepId = i + 1;
-                steps[i].IsParameterize = true;
             }
+
+            //if(e.NewItems!=null)
+            //{
+            //    dg_Step.Dispatcher.BeginInvoke(new Action(() => {
+            //        foreach(var item in e.NewItems)
+            //        {
+            //            var dataGridRow = dg_Step.ItemContainerGenerator.con
+            //            if (dataGridRow != null)
+            //                dataGridRow.DetailsVisibility = System.Windows.Visibility.Collapsed;
+            //        }
+
+            //    }));
+            //}
         }
 
         void SAPScriptRecording_OnSetSession(SAPFEWSELib.GuiSession session)
@@ -89,8 +102,10 @@ namespace ITools
                     //Step s = new Step(r);
                     r.ActionName = upperFirstChar(r.ActionName);
                     r.CompInfo.Id = r.CompInfo.Id.Substring(19);
-                  
+
                     steps.Add(r);
+
+
                 }));
             });
         }
@@ -101,6 +116,44 @@ namespace ITools
             SAPAutomationHelper.Current.StopRecording();
         }
 
+        private void runCase(IEnumerable<RecordStep> steps, bool runWithP = false)
+        {
+            WorkingEventArgs ae = new WorkingEventArgs();
+            ae.IsProcessKnow = true;
+            ae.Current = 0;
+
+            int round = 1;
+            if (runWithP)
+            {
+                round = _parameterTable.Rows.Count;
+            }
+            ae.Max = steps.Count() * round;
+            for (int i = 0; i < round; i++)
+            {
+                foreach (var step in steps)
+                {
+                    ae.Current += 1;
+                    if (runWithP && step.IsParameterize)
+                    {
+                        DataRow dr = _parameterTable.Rows[i];
+                        foreach (var p in step.ActionParams)
+                        {
+                            p.Value = dr[p.Name];
+                        }
+                    }
+                    SAPAutomationHelper.Current.RunAction(step);
+                    if (OnWorking != null)
+                    {
+                        OnWorking(this, ae);
+                    }
+
+                }
+            }
+            
+
+        }
+
+
         private async void mi_Run_Click(object sender, RoutedEventArgs e)
         {
             if (dg_Step.SelectedItems != null)
@@ -110,84 +163,73 @@ namespace ITools
                 var runSteps = dg_Step.SelectedItems.Cast<RecordStep>();
                 await Task.Run(() =>
                 {
-                    WorkingEventArgs ae = new WorkingEventArgs();
-                    ae.IsProcessKnow = true;
-                    ae.Max = runSteps.Count();
-
-                    for (int i = 0; i < runSteps.Count(); i++)
+                    try
                     {
-                        ae.Current = i + 1;
-                        SAPAutomationHelper.Current.RunAction(runSteps.ElementAt(i));
-                        if (OnWorking != null)
-                        {
-                            OnWorking(this, ae);
-                        }
+                        runCase(runSteps, false);
                     }
-
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                        return;
+                    }
+                    finally
+                    {
+                        if (AfterWorking != null)
+                            AfterWorking(this, null);
+                    }
                 });
-                if (AfterWorking != null)
-                    AfterWorking(this, null);
-
             }
-
-
-
-
-
         }
 
-
-
-        private void dg_Step_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private async void mi_RunAll_Click(object sender, RoutedEventArgs e)
         {
 
-            //if (dg_Step.SelectedItems != null)
-            //{
-            //    mySteps = dg_Step.SelectedItems.Cast<RecordStep>().ToList();
-            //}
+            SAPAutomationHelper.Current.StopRecording();
+            setRecordStatus(false);
+
+            await Task.Run(() =>
+            {
+                try
+                {
+                    runCase(steps, false);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return;
+                }
+                finally
+                {
+                    if (AfterWorking != null)
+                        AfterWorking(this, null);
+                }
+            });
+
         }
 
-        private void dg_Step_MouseMove(object sender, MouseEventArgs e)
+        private async void mi_RunAllWithP_Click(object sender, RoutedEventArgs e)
         {
+            SAPAutomationHelper.Current.StopRecording();
+            setRecordStatus(false);
 
-            //if (mySteps != null && mySteps.Count > 0 && e.LeftButton == MouseButtonState.Pressed && e.OriginalSource.GetType() != typeof(System.Windows.Controls.Primitives.Thumb))
-            //{
-            //    var source = e;
-            //    //if (p.X > 0 && p.Y > 0 && p.X < dg.ActualWidth && p.Y < dg.ActualHeight)
-            //    //    return;
-
-            //    CodeMemberMethod runMethod = new CodeMemberMethod();
-            //    runMethod.Attributes = MemberAttributes.Static | MemberAttributes.Public;
-            //    runMethod.Name = "recordAction";
-
-            //    runMethod.Statements.Add(new CodeExpressionStatement(
-            //        new CodeMethodInvokeExpression(
-            //            new CodeVariableReferenceExpression("SAPTestHelper.Current"),
-            //            "SetSession", new CodeExpression[0])));
-
-
-            //    foreach (RecordStep step in mySteps)
-            //    {
-            //        runMethod.Statements.Add(step.GetCodeDetailStatement());
-            //    }
-
-            //    CodeDomProvider provider = CodeDomProvider.CreateProvider("c#");
-            //    CodeGeneratorOptions options = new CodeGeneratorOptions();
-            //    options.BracingStyle = "C";
-            //    StringBuilder sb = new StringBuilder();
-
-            //    using (TextWriter sourceWriter = new StringWriter(sb))
-            //    {
-            //        provider.GenerateCodeFromMember(runMethod, sourceWriter, options);
-            //    }
-            //    DragDrop.DoDragDrop(dg_Step, sb.ToString(), DragDropEffects.Copy);
-            //}
-
+            await Task.Run(() =>
+            {
+                try
+                {
+                    runCase(steps, true);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return;
+                }
+                finally
+                {
+                    if (AfterWorking != null)
+                        AfterWorking(this, null);
+                }
+            });
         }
-
-
-
-
 
         public event OnWorkingHandler OnWorking;
 
@@ -195,48 +237,44 @@ namespace ITools
 
         private void mi_CSharp_Click(object sender, RoutedEventArgs e)
         {
-            CodeMemberMethod runMethod = new CodeMemberMethod();
-            runMethod.Attributes = MemberAttributes.Static | MemberAttributes.Public;
-            runMethod.Name = "recordAction";
-
-            runMethod.Statements.Add(new CodeExpressionStatement(
-                new CodeMethodInvokeExpression(
-                    new CodeVariableReferenceExpression("SAPTestHelper.Current"),
-                    "SetSession", new CodeExpression[0])));
-
-
-            foreach (RecordStep step in dg_Step.SelectedItems.Cast<RecordStep>().ToList())
+            if(dg_Step.SelectedItems != null)
             {
-                runMethod.Statements.Add(step.GetCodeDetailStatement());
+                string code = "";
+                foreach(RecordStep step in dg_Step.SelectedItems.Cast<RecordStep>())
+                {
+                    code += CodeHelper.GetCode(step.GetCodeStatement(), p => p.GenerateCodeFromStatement).ToString();
+                }
+                Clipboard.SetData(DataFormats.Text, code);
             }
+            
+            
 
-            CodeDomProvider provider = CodeDomProvider.CreateProvider("c#");
-            CodeGeneratorOptions options = new CodeGeneratorOptions();
-            options.BracingStyle = "C";
-            StringBuilder sb = new StringBuilder();
 
-            using (TextWriter sourceWriter = new StringWriter(sb))
-            {
-                provider.GenerateCodeFromMember(runMethod, sourceWriter, options);
-            }
 
-            Clipboard.SetData(DataFormats.Text, sb.ToString());
-        }
 
-        private void mi_HightLight_Click(object sender, RoutedEventArgs e)
-        {
-            //var data = dg_Step.SelectedItem;
-            //var dgr = dg_Step.ItemContainerGenerator.ContainerFromItem(data) as DataGridRow;
-            //var backgroud = dgr.Background;
-            //if (dg_Step.SelectedItems != null)
+            //CodeMemberMethod runMethod = new CodeMemberMethod();
+            //runMethod.Attributes = MemberAttributes.Static | MemberAttributes.Public;
+            //runMethod.Name = "recordAction";
+
+            //runMethod.Statements.Add(new CodeExpressionStatement(
+            //    new CodeMethodInvokeExpression(
+            //        new CodeVariableReferenceExpression("SAPTestHelper.Current"),
+            //        "SetSession", new CodeExpression[0])));
+
+
+            //foreach (RecordStep step in dg_Step.SelectedItems.Cast<RecordStep>().ToList())
             //{
-            //    foreach (var row in dg_Step.SelectedItems)
-            //    {
-            //        var dgr = dg_Step.ItemContainerGenerator.ContainerFromItem(row) as DataGridRow;
-            //        dgr.Background = new SolidColorBrush(Colors.GreenYellow);
-            //    }
+            //    runMethod.Statements.Add(step.GetCodeStatement());
             //}
+
+            //StringBuilder sb = CodeHelper.GetCode<CodeMemberMethod>(runMethod, p => p.GenerateCodeFromMember);
+
+
+
+            //Clipboard.SetData(DataFormats.Text, sb.ToString());
         }
+
+
 
         private void mi_Test_Click(object sender, RoutedEventArgs e)
         {
@@ -245,10 +283,6 @@ namespace ITools
                 List<SAPDataParameter> paras = new List<SAPDataParameter>();
                 ParameterWindow win = new ParameterWindow(dg_Step.SelectedItems.Cast<RecordStep>(), paras);
                 win.ShowDialog();
-
-
-                DataTable dt = createTable(paras);
-                dg_Parameter.DataContext = dt;
             }
 
             //CodeTypeMember typeMember = SAPAutomationExtension.GetDataClass("Test", paras);
@@ -257,26 +291,89 @@ namespace ITools
 
         }
 
-        private DataTable createTable(List<SAPDataParameter> parameters)
+
+
+
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            DataTable dt = new DataTable();
-            foreach (var p in parameters)
+            var gridRow = findParentElement<DataGridRow>(sender as DependencyObject);
+            var step = dg_Step.ItemContainerGenerator.ItemFromContainer(gridRow) as RecordStep;
+            if(step.ActionParams == null || step.ActionParams.Count==0)
             {
-                DataColumn dc = new DataColumn(p.Name, p.Type);
-                dt.Columns.Add(dc);
+                MessageBox.Show("There is no parameter in the step.");
+                step.IsParameterize = false;
+                return;
             }
-            DataRow dr = dt.NewRow();
-            foreach (var p in parameters)
+            foreach (var p in step.ActionParams)
+            {
+                if (!CodeHelper.IsValidVariable(p.Name))
+                {
+                    MessageBox.Show(string.Format("Parameter named '{0}' is not a valid name", p.Name), "Error");
+                    step.IsParameterize = false;
+                    return;
+                }
+                for (int i = 0; i < _parameterTable.Columns.Count; i++)
+                {
+                    if (_parameterTable.Columns[i].ColumnName == p.Name)
+                    {
+                        MessageBox.Show(string.Format("Parameter named '{0}' is already exist,pleaese choose another name", p.Name), "Error");
+                        step.IsParameterize = false;
+                        return;
+                    }
+                }
+            }
+
+            foreach (var p in step.ActionParams)
+            {
+                DataColumn col = new DataColumn(p.Name, p.Type);
+                _parameterTable.Columns.Add(col);
+            }
+            DataRow dr = null;
+            if (_parameterTable.Rows.Count == 0)
+            {
+                dr = _parameterTable.NewRow();
+                _parameterTable.Rows.Add(dr);
+            }
+            else
+            {
+                dr = _parameterTable.Rows[0];
+            }
+            foreach (var p in step.ActionParams)
             {
                 dr[p.Name] = p.Value;
             }
-            dt.Rows.Add(dr);
-            return dt;
+            dg_Parameter.ItemsSource = null;
+            dg_Parameter.ItemsSource = _parameterTable.DefaultView;
+
         }
 
-        private void mi_Refresh_Click(object sender, RoutedEventArgs e)
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            dg_Step.DataContext = steps;
+            var gridRow = findParentElement<DataGridRow>(sender as DependencyObject);
+            var step = dg_Step.ItemContainerGenerator.ItemFromContainer(gridRow) as RecordStep;
+            foreach (var p in step.ActionParams)
+            {
+                for (int i = 0; i < _parameterTable.Columns.Count; i++)
+                {
+                    if (_parameterTable.Columns[i].ColumnName == p.Name)
+                    {
+                        _parameterTable.Columns.Remove(p.Name);
+                    }
+                }
+            }
+            dg_Parameter.ItemsSource = null;
+            dg_Parameter.ItemsSource = _parameterTable.DefaultView;
+        }
+
+
+        private static T findParentElement<T>(DependencyObject source) where T : DependencyObject
+        {
+            while ((source as T) == null)
+            {
+                source = VisualTreeHelper.GetParent(source);
+            }
+            return source as T;
         }
     }
 }

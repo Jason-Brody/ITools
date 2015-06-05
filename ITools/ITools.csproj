@@ -64,7 +64,7 @@
     <Compile Include="CodeHelper.cs" />
     <Compile Include="Converters\ParameterConverter.cs" />
     <Compile Include="Converters\ParameterTypeConverter.cs" />
-    <Compile Include="Converters\RowBackgroundConverter.cs" />
+    <Compile Include="Converters\VisiblityToBooleanConverter.cs" />
     <Compile Include="IWorking.cs" />
     <Compile Include="SAPBaseControl.cs" />
     <Compile Include="SAPComponents.xaml.cs">

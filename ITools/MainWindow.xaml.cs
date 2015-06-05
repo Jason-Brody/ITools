@@ -37,7 +37,9 @@ namespace ITools
         public MainWindow()
         {
             InitializeComponent();
-            SAPAutomationHelper.Current.SetSAPApiAssembly();            
+            SAPAutomationHelper.Current.SetSAPApiAssembly();         
+   
+            
         }
 
         private void hookWorkingEvent()
@@ -55,10 +57,13 @@ namespace ITools
 
         void c_AfterWorking(object sender, EventArgs e)
         {
-            this.IsEnabled = true;
-            if (pb.IsIndeterminate)
-                pb.IsIndeterminate = false;
-            pb.Value = 0;
+            this.Dispatcher.BeginInvoke(new Action(() => {
+                this.IsEnabled = true;
+                if (pb.IsIndeterminate)
+                    pb.IsIndeterminate = false;
+                pb.Value = 0;
+            }));
+            
         }
 
         void c_OnWorking(object sender, WorkingEventArgs e)

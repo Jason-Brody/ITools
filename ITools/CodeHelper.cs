@@ -11,18 +11,23 @@ namespace ITools
 {
     class CodeHelper
     {
-        public static string GetCode<T>(T item,Func<CodeDomProvider, Action<T, TextWriter, CodeGeneratorOptions>> action)
+        private static CodeDomProvider provider = CodeDomProvider.CreateProvider("c#");
+        public static StringBuilder GetCode<T>(T item,Func<CodeDomProvider, Action<T, TextWriter, CodeGeneratorOptions>> action)
         {
-            CodeDomProvider provider = CodeDomProvider.CreateProvider("c#");
             CodeGeneratorOptions options = new CodeGeneratorOptions();
-            options.BracingStyle = "c";
+            options.BracingStyle = "C";
             StringBuilder sb = new StringBuilder();
-
+            
             using (TextWriter sourceWriter = new StringWriter(sb))
             {
                 action(provider)(item, sourceWriter, options);
             }
-            return sb.ToString();
+            return sb;
+        }
+
+        public static bool IsValidVariable(string VariableName)
+        {
+            return provider.IsValidIdentifier(VariableName);
         }
 
     }
