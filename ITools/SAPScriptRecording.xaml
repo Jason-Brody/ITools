@@ -78,6 +78,7 @@
                         </DataGrid.RowDetailsTemplate>
                         <DataGrid.ContextMenu>
                             <ContextMenu>
+                                <MenuItem Header="Create Module" x:Name="mi_CreateM" Click="mi_CreateM_Click"/>
                                 <MenuItem Header="Generate C# Code" x:Name="mi_CSharp" Click="mi_CSharp_Click"/>
                                 <MenuItem Header="Run Selected Steps" x:Name="mi_Run" Click="mi_Run_Click"/>
                                 

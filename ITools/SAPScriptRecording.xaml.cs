@@ -23,6 +23,7 @@ using System.Windows.Shapes;
 using System.Reflection.Emit;
 using System.Data;
 using System.Reflection;
+using SAPTestRunTime;
 
 namespace ITools
 {
@@ -149,7 +150,7 @@ namespace ITools
 
                 }
             }
-            
+
 
         }
 
@@ -237,69 +238,22 @@ namespace ITools
 
         private void mi_CSharp_Click(object sender, RoutedEventArgs e)
         {
-            if(dg_Step.SelectedItems != null)
+            if (dg_Step.SelectedItems != null)
             {
                 string code = "";
-                foreach(RecordStep step in dg_Step.SelectedItems.Cast<RecordStep>())
+                foreach (RecordStep step in dg_Step.SelectedItems.Cast<RecordStep>())
                 {
                     code += CodeHelper.GetCode(step.GetCodeStatement(), p => p.GenerateCodeFromStatement).ToString();
                 }
                 Clipboard.SetData(DataFormats.Text, code);
             }
-            
-            
-
-
-
-
-            //CodeMemberMethod runMethod = new CodeMemberMethod();
-            //runMethod.Attributes = MemberAttributes.Static | MemberAttributes.Public;
-            //runMethod.Name = "recordAction";
-
-            //runMethod.Statements.Add(new CodeExpressionStatement(
-            //    new CodeMethodInvokeExpression(
-            //        new CodeVariableReferenceExpression("SAPTestHelper.Current"),
-            //        "SetSession", new CodeExpression[0])));
-
-
-            //foreach (RecordStep step in dg_Step.SelectedItems.Cast<RecordStep>().ToList())
-            //{
-            //    runMethod.Statements.Add(step.GetCodeStatement());
-            //}
-
-            //StringBuilder sb = CodeHelper.GetCode<CodeMemberMethod>(runMethod, p => p.GenerateCodeFromMember);
-
-
-
-            //Clipboard.SetData(DataFormats.Text, sb.ToString());
         }
-
-
-
-        private void mi_Test_Click(object sender, RoutedEventArgs e)
-        {
-            if (dg_Step.SelectedItem != null)
-            {
-                List<SAPDataParameter> paras = new List<SAPDataParameter>();
-                ParameterWindow win = new ParameterWindow(dg_Step.SelectedItems.Cast<RecordStep>(), paras);
-                win.ShowDialog();
-            }
-
-            //CodeTypeMember typeMember = SAPAutomationExtension.GetDataClass("Test", paras);
-            //CodeHelper.GetCode<CodeTypeMember>(typeMember, p => p.GenerateCodeFromMember);
-
-
-        }
-
-
-
-
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             var gridRow = findParentElement<DataGridRow>(sender as DependencyObject);
             var step = dg_Step.ItemContainerGenerator.ItemFromContainer(gridRow) as RecordStep;
-            if(step.ActionParams == null || step.ActionParams.Count==0)
+            if (step.ActionParams == null || step.ActionParams.Count == 0)
             {
                 MessageBox.Show("There is no parameter in the step.");
                 step.IsParameterize = false;
@@ -374,6 +328,60 @@ namespace ITools
                 source = VisualTreeHelper.GetParent(source);
             }
             return source as T;
+        }
+
+        private void mi_CreateM_Click(object sender, RoutedEventArgs e)
+        {
+            SAPModuleVM attribute;
+            ModuleWindow mw = new ModuleWindow(out attribute);
+            mw.ShowDialog();
+            if (attribute.IsSet)
+            {
+                createModule(attribute);
+            }
+        }
+
+        private void createModule(SAPModuleAttribute attribute)
+        {
+            string actionClassName = attribute.ModuleName;
+            string dataClassName = actionClassName + "_Data";
+
+            CodeNamespace cns = new CodeNamespace("Test");
+            CodeTypeDeclaration moduleClass = new CodeTypeDeclaration(actionClassName);
+            moduleClass.IsClass = true;
+            moduleClass.Attributes = MemberAttributes.Public;
+            CodeMemberMethod method = new CodeMemberMethod();
+            method.Name = "RunAction";
+            method.Attributes = MemberAttributes.Public;
+
+            bool hasParameter = false;
+
+            List<SAPDataParameter> paras = new List<SAPDataParameter>();
+            foreach (var step in steps)
+            {
+                if (step.IsParameterize)
+                {
+                    hasParameter = true;
+                    paras.AddRange(step.ActionParams);
+                    method.Statements.Add(step.GetCodeStatement("Data"));
+                }
+                else
+                {
+                    method.Statements.Add(step.GetCodeStatement());
+                }
+            }
+
+            if (hasParameter)
+                method.Parameters.Add(new CodeParameterDeclarationExpression() { Type = new CodeTypeReference(dataClassName), Name = "Data" });
+
+            moduleClass.Members.Add(method);
+            cns.Types.Add(moduleClass);
+            var dataClass = SAPAutomationExtension.GetDataClass(dataClassName, paras, attribute);
+            if (dataClass != null)
+                cns.Types.Add(dataClass);
+
+            var code = CodeHelper.GetCode(cns, p => p.GenerateCodeFromNamespace).ToString();
+
         }
     }
 }
