@@ -57,18 +57,7 @@ namespace ITools
                 steps[i].StepId = i + 1;
             }
 
-            //if(e.NewItems!=null)
-            //{
-            //    dg_Step.Dispatcher.BeginInvoke(new Action(() => {
-            //        foreach(var item in e.NewItems)
-            //        {
-            //            var dataGridRow = dg_Step.ItemContainerGenerator.con
-            //            if (dataGridRow != null)
-            //                dataGridRow.DetailsVisibility = System.Windows.Visibility.Collapsed;
-            //        }
-
-            //    }));
-            //}
+            
         }
 
         void SAPScriptRecording_OnSetSession(SAPFEWSELib.GuiSession session)
@@ -243,7 +232,11 @@ namespace ITools
                 string code = "";
                 foreach (RecordStep step in dg_Step.SelectedItems.Cast<RecordStep>())
                 {
-                    code += CodeHelper.GetCode(step.GetCodeStatement(), p => p.GenerateCodeFromStatement).ToString();
+                    foreach(var statement in step.GetCodeStatement())
+                    {
+                        code += CodeHelper.GetCode(statement, p => p.GenerateCodeFromStatement).ToString();
+                    }
+                    
                 }
                 Clipboard.SetData(DataFormats.Text, code);
             }
@@ -306,18 +299,22 @@ namespace ITools
         {
             var gridRow = findParentElement<DataGridRow>(sender as DependencyObject);
             var step = dg_Step.ItemContainerGenerator.ItemFromContainer(gridRow) as RecordStep;
-            foreach (var p in step.ActionParams)
+            if(step.ActionParams!=null)
             {
-                for (int i = 0; i < _parameterTable.Columns.Count; i++)
+                foreach (var p in step.ActionParams)
                 {
-                    if (_parameterTable.Columns[i].ColumnName == p.Name)
+                    for (int i = 0; i < _parameterTable.Columns.Count; i++)
                     {
-                        _parameterTable.Columns.Remove(p.Name);
+                        if (_parameterTable.Columns[i].ColumnName == p.Name)
+                        {
+                            _parameterTable.Columns.Remove(p.Name);
+                        }
                     }
                 }
+                dg_Parameter.ItemsSource = null;
+                dg_Parameter.ItemsSource = _parameterTable.DefaultView;
             }
-            dg_Parameter.ItemsSource = null;
-            dg_Parameter.ItemsSource = _parameterTable.DefaultView;
+            
         }
 
 
@@ -363,11 +360,12 @@ namespace ITools
                 {
                     hasParameter = true;
                     paras.AddRange(step.ActionParams);
-                    method.Statements.Add(step.GetCodeStatement("Data"));
+                    method.Statements.AddRange(step.GetCodeStatement("Data").ToArray());
+                    
                 }
                 else
                 {
-                    method.Statements.Add(step.GetCodeStatement());
+                    method.Statements.AddRange(step.GetCodeStatement().ToArray());
                 }
             }
 

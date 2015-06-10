@@ -62,7 +62,8 @@ namespace ITools
                 root.SetAttribute("name", "root");
                 Task loopNodeTask = new Task(() =>
                 {
-                    WrapComp comp = new WrapComp() { Comp = SAPAutomationHelper.Current.SAPGuiSession as GuiComponent };
+                    var comp = SAPAutomationHelper.Current.SAPGuiSession as GuiComponent;
+                    //WrapComp comp = new WrapComp() { Comp = SAPAutomationHelper.Current.SAPGuiSession as GuiComponent };
                     _maxCount = 20;
 
 
@@ -84,19 +85,20 @@ namespace ITools
             }
         }
 
-        private XmlElement addNode(WrapComp comp, XmlElement item, int count)
+        private XmlElement addNode(dynamic Comp, XmlElement item, int count)
         {
+            var comp = Comp as GuiComponent;
             XmlElement newItem = xDoc.CreateElement("Node");
-            newItem.SetAttribute("name", comp.Comp.Name);
-            newItem.SetAttribute("id", comp.Comp.Id);
-            newItem.SetAttribute("type", SAPAutomationExtension.GetDetailType(comp.Comp));
+            newItem.SetAttribute("name", comp.Name);
+            newItem.SetAttribute("id", comp.Id);
+            newItem.SetAttribute("type", SAPAutomationExtension.GetDetailType(comp));
             newItem.SetAttribute("num", count.ToString());
             newItem.SetAttribute("isExpand", _isExpand.ToString());
-            if (comp.Comp is GuiVComponent)
+            if (comp is GuiVComponent)
             {
                 try
                 {
-                    newItem.SetAttribute("text", ((GuiVComponent)comp.Comp).Tooltip);
+                    newItem.SetAttribute("text", ((GuiVComponent)comp).Tooltip);
                 }
                 catch { }
             }
@@ -134,8 +136,8 @@ namespace ITools
                 //XmlElement rootCopy = root.Clone() as XmlElement;
                 string id = root.GetAttribute("id");
                 GuiComponent cp = SAPAutomationHelper.Current.GetSAPComponentById<GuiComponent>(id);
-                WrapComp comp = new WrapComp() { Comp = cp };
-                SAPAutomationHelper.Current.LoopSAPComponents<XmlElement>(comp, root, root.ChildNodes.Count, _maxCount, addNode);
+                
+                SAPAutomationHelper.Current.LoopSAPComponents<XmlElement>(cp, root, root.ChildNodes.Count, _maxCount, addNode);
                 root = tv_Elements.SelectedItem as XmlElement;
                 var lastNode = root.LastChild.Clone();
                 root.RemoveChild(root.LastChild);
@@ -213,18 +215,18 @@ namespace ITools
                 //XmlElement rootCopy = root.Clone() as XmlElement;
                 string id = root.GetAttribute("id");
                 GuiComponent cp = SAPAutomationHelper.Current.GetSAPComponentById<GuiComponent>(id);
-                WrapComp comp = new WrapComp() { Comp = cp };
-                displayData(comp);
+               
+                displayData(cp);
             }
         }
 
 
-        private void displayData(WrapComp c)
+        private void displayData(GuiComponent c)
         {
             Type detailType = null; GuiShell shellObj = null;
-            if (c.Comp.Type.ToLower().Contains("shell"))
+            if (c.Type.ToLower().Contains("shell"))
             {
-                shellObj = c.Comp as GuiShell;
+                shellObj = c as GuiShell;
                 if (shellObj != null)
                 {
                     foreach (Type t in SAPAutomationHelper.Current.SAPGuiApiAssembly.GetTypes().Where(tp => tp.IsInterface))
@@ -238,7 +240,7 @@ namespace ITools
                 }
             }
 
-            string typeName = detailType == null ? c.Comp.Type : detailType.Name;
+            string typeName = detailType == null ? c.Type : detailType.Name;
 
             var props = SAPAutomationHelper.Current.GetSAPTypeInfoes<PropertyInfo>(typeName, t => t.GetProperties().Where(p => p.IsSpecialName == false));
             {
@@ -250,7 +252,7 @@ namespace ITools
                     prop.IsReadOnly = !p.CanWrite;
                     try
                     {
-                        prop.Value = p.GetValue(c.Comp).ToString();
+                        prop.Value = p.GetValue(c).ToString();
                     }
                     catch
                     {
@@ -312,7 +314,7 @@ namespace ITools
             SAPAutomationHelper.Current.Spy((c) =>
             {
                 displayData(c);
-                GuiComponent cp = c.Comp;
+                GuiComponent cp = c;
                 Stack<GuiComponent> comps = new Stack<GuiComponent>();
                 do
                 {
@@ -326,12 +328,12 @@ namespace ITools
                 XmlElement root = xDoc.CreateElement("Node");
                 root.SetAttribute("name", "root");
                 var firstComp = comps.Pop();
-                XmlElement temp = addNode(new WrapComp() { Comp = firstComp }, root, 1);
+                XmlElement temp = addNode(firstComp, root, 1);
 
 
                 while (comps.Count > 0)
                 {
-                    temp = addNode(new WrapComp() { Comp = comps.Pop() }, temp, 1);
+                    temp = addNode(comps.Pop() , temp, 1);
                 }
                 xDoc.AppendChild(root.FirstChild);
 

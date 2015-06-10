@@ -94,10 +94,8 @@
                             <DataGridTextColumn Header="Step Id" Binding="{Binding StepId,UpdateSourceTrigger=PropertyChanged}" Width="*"/>
                             <DataGridComboBoxColumn Header="Action" IsReadOnly="True" ItemsSource="{Binding Source={StaticResource RecordAction}}" SelectedItemBinding="{Binding Action}" Width="*"/>
                             <DataGridTextColumn Header="Comp Id" IsReadOnly="True" Binding="{Binding CompInfo.Id}" Width="4*"/>
-                            <!--<DataGridTextColumn Header="Comp Name" Binding="{Binding CompInfo.Name}" Width="*"/>-->
                             <DataGridTextColumn Header="Comp Type" IsReadOnly="True" Binding="{Binding CompInfo.Type}" Width="*"/>
                             <DataGridTextColumn Header="Action Name" IsReadOnly="True" Binding="{Binding ActionName}" Width="*"/>
-                            <!--<DataGridTextColumn Header="Parameter" Binding="{Binding ActionParams,Converter={StaticResource ParameterConverter}}" Width="*"/>-->
                             <DataGridTemplateColumn Header="IsParameterize">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -110,7 +108,7 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <!--<DataGridCheckBoxColumn Header="IsParameterize" Binding="{Binding IsParameterize}" IsThreeState="False"/>-->
+                            <DataGridCheckBoxColumn Header="Take Screen Shot" Binding="{Binding TakeScreenShot,UpdateSourceTrigger=PropertyChanged}" Width="*" IsThreeState="False"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </TabItem>
