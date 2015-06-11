@@ -13,11 +13,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SAPGuiAutomationLib;
-using SAPTestRunTime;
 using System.Reflection;
 using ITools.ViewModel;
 using SAPFEWSELib;
 using System.Data;
+using SAPAutomation;
+using SAPAutomation.Extension;
 
 namespace ITools
 {

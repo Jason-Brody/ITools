@@ -34,12 +34,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SAPAutomation">
+      <HintPath>..\..\SAPGuiAutomationLib\SAPAutomation\bin\Debug\SAPAutomation.dll</HintPath>
+    </Reference>
     <Reference Include="SAPGuiAutomationLib, Version=2.0.0.3, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\SAPGuiAutomationLib\SAPGuiAutomationLib\bin\Debug\SAPGuiAutomationLib.dll</HintPath>
-    </Reference>
-    <Reference Include="SAPTestRunTime">
-      <HintPath>..\..\SAPGuiAutomationLib\SAPTestForRunTime\bin\Debug\SAPTestRunTime.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

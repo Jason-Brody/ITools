@@ -1,5 +1,5 @@
-﻿using SAPGuiAutomationLib;
-using SAPTestRunTime;
+﻿using SAPAutomation.Framework;
+using SAPGuiAutomationLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;

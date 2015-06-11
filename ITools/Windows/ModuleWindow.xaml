@@ -30,10 +30,10 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Module Name:"/>
-        <TextBox Text="{Binding ModuleName}" Grid.Column="1"/>
+        <TextBox Text="{Binding Name}" Grid.Column="1"/>
         
         <TextBlock Text="Module Version:" Grid.Row="1"/>
-        <TextBox Text="{Binding ModuleVersion}" Grid.Row="1" Grid.Column="1"/>
+        <TextBox Text="{Binding Version}" Grid.Row="1" Grid.Column="1"/>
 
         <TextBlock Text="Author:" Grid.Row="2"/>
         <TextBox Text="{Binding Author}" Grid.Row="2" Grid.Column="1"/>

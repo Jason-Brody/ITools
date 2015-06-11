@@ -23,7 +23,8 @@ using System.Windows.Shapes;
 using System.Reflection.Emit;
 using System.Data;
 using System.Reflection;
-using SAPTestRunTime;
+using SAPAutomation.Framework;
+
 
 namespace ITools
 {
@@ -334,13 +335,14 @@ namespace ITools
             mw.ShowDialog();
             if (attribute.IsSet)
             {
-                createModule(attribute);
+                var cls = steps.CreateModule(attribute.Name);
+                var code = CodeHelper.GetCode(cls, p => p.GenerateCodeFromType).ToString();
             }
         }
 
         private void createModule(SAPModuleAttribute attribute)
         {
-            string actionClassName = attribute.ModuleName;
+            string actionClassName = attribute.Name;
             string dataClassName = actionClassName + "_Data";
 
             CodeNamespace cns = new CodeNamespace("Test");
