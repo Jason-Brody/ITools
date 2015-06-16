@@ -24,6 +24,7 @@ using System.Reflection.Emit;
 using System.Data;
 using System.Reflection;
 using SAPAutomation.Framework;
+using SAPAutomation.Framework.Attributes;
 
 
 namespace ITools
@@ -58,7 +59,27 @@ namespace ITools
                 steps[i].StepId = i + 1;
             }
 
-            
+            if(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+            {
+                foreach(RecordStep step in e.OldItems)
+                {
+                    if(step.IsParameterize && step.ActionParams!=null)
+                    {
+                        foreach (var p in step.ActionParams)
+                        {
+                            for (int i = 0; i < _parameterTable.Columns.Count; i++)
+                            {
+                                if (_parameterTable.Columns[i].ColumnName == p.Name)
+                                {
+                                    _parameterTable.Columns.Remove(p.Name);
+                                }
+                            }
+                        }
+                        dg_Parameter.ItemsSource = null;
+                        dg_Parameter.ItemsSource = _parameterTable.DefaultView;
+                    }
+                }
+            }
         }
 
         void SAPScriptRecording_OnSetSession(SAPFEWSELib.GuiSession session)

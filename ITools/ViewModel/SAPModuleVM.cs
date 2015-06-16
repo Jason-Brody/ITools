@@ -1,4 +1,5 @@
 ﻿using SAPAutomation.Framework;
+using SAPAutomation.Framework.Attributes;
 using SAPGuiAutomationLib;
 using System;
 using System.Collections.Generic;
