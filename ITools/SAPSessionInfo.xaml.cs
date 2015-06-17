@@ -28,7 +28,10 @@ namespace ITools
         {
             InitializeComponent();
             (App.Current.MainWindow as MainWindow).OnSetSession += getSession;
+            
         }
+
+        
 
         
 

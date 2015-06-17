@@ -31,7 +31,6 @@ namespace ITools
     public partial class MainWindow : Window
     {
         public event OnSessionSettingHanlder OnSetSession;
-        
 
         private GuiSession _session;
         private GuiApplication _app;
@@ -39,8 +38,6 @@ namespace ITools
         {
             InitializeComponent();
             SAPAutomationHelper.Current.SetSAPApiAssembly();         
-   
-            
         }
 
         private void hookWorkingEvent()
@@ -120,7 +117,10 @@ namespace ITools
             {
                 OnSetSession(_session);
             }
+            
         }
+
+       
 
         private void btn_OK_Click(object sender, RoutedEventArgs e)
         {

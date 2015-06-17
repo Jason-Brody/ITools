@@ -44,9 +44,22 @@ namespace ITools
         {
             _session = session;
             this.IsEnabled = true;
+            clearContent();
+            _session.Destroy -= _session_Destroy;
+            _session.Destroy += _session_Destroy;
+        }
+
+        void clearContent()
+        {
             lv_Methods.DataContext = null;
             lv_Props.DataContext = null;
             tv_Elements.DataContext = null;
+        }
+
+        void _session_Destroy(GuiSession Session)
+        {
+            this.Dispatcher.BeginInvoke(new Action(() => { this.IsEnabled = false; }));
+            
         }
 
         private async void btn_ShowAll_Click(object sender, RoutedEventArgs e)
