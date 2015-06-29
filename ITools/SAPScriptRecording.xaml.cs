@@ -351,14 +351,20 @@ namespace ITools
 
         private void mi_CreateM_Click(object sender, RoutedEventArgs e)
         {
-            SAPModuleVM attribute;
-            ModuleWindow mw = new ModuleWindow(out attribute);
-            mw.ShowDialog();
-            if (attribute.IsSet)
+            CreateModule moduleWin = new CreateModule();
+            moduleWin.ShowDialog();
+
+            if(!moduleWin.IsCancel)
             {
-                var cls = steps.CreateModule(attribute.Name);
+                var cls = steps.CreateModule(moduleWin.ModuleName);
                 var code = CodeHelper.GetCode(cls, p => p.GenerateCodeFromType).ToString();
+
+                ScriptWin win = new ScriptWin(code);
+                win.ShowDialog();
+
             }
+
+            
         }
 
         private void createModule(SAPModuleAttribute attribute)

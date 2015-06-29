@@ -361,5 +361,23 @@ namespace ITools
 
             });
         }
+
+        private void mi_CopyProp_Click(object sender, RoutedEventArgs e)
+        {
+            if (lv_Props.SelectedItem != null)
+            {
+                SAPElementProperty prop = lv_Props.SelectedItem as SAPElementProperty;
+                Clipboard.SetData(DataFormats.Text, prop.Name);
+            }
+        }
+
+        private void mi_CopyValue_Click(object sender, RoutedEventArgs e)
+        {
+            if (lv_Props.SelectedItem != null)
+            {
+                SAPElementProperty prop = lv_Props.SelectedItem as SAPElementProperty;
+                Clipboard.SetData(DataFormats.Text, prop.Value);
+            }
+        }
     }
 }
