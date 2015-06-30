@@ -342,10 +342,14 @@ namespace ITools
 
         private static T findParentElement<T>(DependencyObject source) where T : DependencyObject
         {
-            while ((source as T) == null)
+            if(source!=null)
             {
-                source = VisualTreeHelper.GetParent(source);
+                while ((source as T) == null)
+                {
+                    source = VisualTreeHelper.GetParent(source);
+                }
             }
+            
             return source as T;
         }
 
