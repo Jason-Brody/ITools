@@ -352,6 +352,8 @@ namespace ITools
         private void mi_CreateM_Click(object sender, RoutedEventArgs e)
         {
             CreateModule moduleWin = new CreateModule();
+            moduleWin.Left = App.Current.MainWindow.Left + 50;
+            moduleWin.Top = App.Current.MainWindow.Top + 50;
             moduleWin.ShowDialog();
 
             if(!moduleWin.IsCancel)
@@ -360,6 +362,8 @@ namespace ITools
                 var code = CodeHelper.GetCode(cls, p => p.GenerateCodeFromType).ToString();
 
                 ScriptWin win = new ScriptWin(code);
+                win.Left = App.Current.MainWindow.Left + 50;
+                win.Top = App.Current.MainWindow.Top + 50;
                 win.ShowDialog();
 
             }
