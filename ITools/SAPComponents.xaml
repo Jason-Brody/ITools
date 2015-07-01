@@ -9,6 +9,10 @@
         <Style TargetType="{x:Type TreeViewItem}">
             <Setter Property="IsExpanded" Value="{Binding XPath=@isExpand}"/>
         </Style>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="MinWidth" Value="50"/>
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -25,8 +29,9 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
-                <Button Margin="5" x:Name="btn_ShowAll" Click="btn_ShowAll_Click" Content="Get All Components" HorizontalAlignment="Center"/>
-                <Button Margin="5" x:Name="btn_Spy" Click="btn_Spy_Click" Content="Spy"/>
+                <Button x:Name="btn_ShowAll" Click="btn_ShowAll_Click" Content="Get All Components" />
+                <Button x:Name="btn_Spy" Click="btn_Spy_Click" Content="Spy"/>
+                <Button x:Name="btn_ScreenShot" Click="btn_ScreenShot_Click" Content="Take Screenshot"/>
             </StackPanel>
             <TreeView x:Name="tv_Elements"  ItemsSource="{Binding}"
                       MouseMove="tv_Elements_MouseMove" Grid.Row="1"

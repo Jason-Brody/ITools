@@ -379,5 +379,15 @@ namespace ITools
                 Clipboard.SetData(DataFormats.Text, prop.Value);
             }
         }
+
+        private void btn_ScreenShot_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+            if(sfd.ShowDialog()== System.Windows.Forms.DialogResult.OK)
+            {
+                string fileName = sfd.FileName;
+                SAPAutomationHelper.Current.TakeScreenShot(fileName);
+            }
+        }
     }
 }
