@@ -7,9 +7,11 @@ using System.Text;
 using SAPAutomation.Extension;
 using SAPAutomation.Framework.Attributes;
 using SAPAutomation.Interfaces;
-using SAPAutomation.Data;
 using System.Data;
 using System.Diagnostics;
+using System.Reflection;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace SAPScriptTemplate
 {
@@ -19,17 +21,30 @@ namespace SAPScriptTemplate
         {
             
 
-            //SAPLogon logon = new SAPAutomation.SAPLogon();
-            //logon.OpenConnection("serverAddress");
-            //logon.Login("UserName", "Password", "Client", "Language");
-            //SAPTestHelper.Current.SetSession(logon);
-
             SAPTestHelper.Current.SetSession();
+            SAPTestHelper.Current.SAPGuiSession.StartRequest += (s) => {
+                SAPTestHelper.Current.TakeScreenShot(SAPTestHelper.Current.ScreenDatas.Count.ToString() + ".jpg");
+                Console.WriteLine(SAPTestHelper.Current.ScreenDatas.Count);
+            };
+            //Console.ReadLine();
+            SAPTestHelper.Current.TurnScreenLog(true);
+            SAPTestHelper.Current.SAPGuiSession.EndTransaction();
+
             DemoScript script = new DemoScript();
             script.CurFrom = "EUR";
             script.CurTo = "USD";
             script.RateType = "M";
             DemoScript.RunAction(script);
+
+            SAPTestHelper.Current.TurnScreenLog(false);
+            var screen = SAPTestHelper.Current.ScreenDatas;
+            XmlSerializer xs = new XmlSerializer(typeof(List<ScreenData>));
+            using (FileStream fs = new FileStream("test.xml", FileMode.Create))
+            {
+
+                xs.Serialize(fs, new List<ScreenData>(screen));
+            }
+
         }
     }
 

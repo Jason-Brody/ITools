@@ -10,22 +10,21 @@ using SAPFEWSELib;
 
 namespace SAPScriptTemplate
 {
-    public class DemoScript : IRun
+    public class DemoScript 
     {
         /// Exchange Rate Type
-        [TestData]
+       
         public System.String RateType { get; set; }
         /// From currency
-        [TestData]
+       
         public System.String CurFrom { get; set; }
         /// To-currency
-        [TestData]
+       
         public System.String CurTo { get; set; }
 
         public static void RunAction(DemoScript Data)
         {
-            SAPTestHelper.Current.SAPGuiSession.FindById<GuiOkCodeField>("wnd[0]/tbar[0]/okcd").Text = "/n";
-            SAPTestHelper.Current.SAPGuiSession.FindById<GuiMainWindow>("wnd[0]").SendVKey(0);
+            
             SAPTestHelper.Current.SAPGuiSession.FindById<GuiOkCodeField>("wnd[0]/tbar[0]/okcd").Text = "se16";
             SAPTestHelper.Current.SAPGuiSession.FindById<GuiMainWindow>("wnd[0]").SendVKey(0);
             SAPTestHelper.Current.SAPGuiSession.FindById<GuiCTextField>("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "TCURR";
@@ -39,9 +38,6 @@ namespace SAPScriptTemplate
             SAPTestHelper.Current.SAPGuiSession.FindById<GuiButton>("wnd[0]/tbar[1]/btn[8]").Press();
         }
 
-        public void Run(object data)
-        {
-            DemoScript.RunAction(data as DemoScript);
-        }
+
     }
 }

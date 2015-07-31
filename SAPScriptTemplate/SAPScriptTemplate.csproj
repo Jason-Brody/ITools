@@ -32,7 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SAPAutomation">
+    <Reference Include="SAPAutomation, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\SAPGuiAutomationLib\SAPAutomation\bin\Debug\SAPAutomation.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -47,6 +48,7 @@
     <Compile Include="DemoScript.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestInterface.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="SAPFEWSELib">
@@ -67,6 +69,9 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
