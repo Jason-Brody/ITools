@@ -5,26 +5,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SAPAutomation.Extension;
 using SAPFEWSELib;
+
 
 namespace SAPScriptTemplate
 {
+    [Comment("To Set up Currency")]
     public class DemoScript 
     {
         /// Exchange Rate Type
        
         public System.String RateType { get; set; }
         /// From currency
-       
+
+        [Comment("To Set up Currency")]
         public System.String CurFrom { get; set; }
         /// To-currency
        
+        [Comment("To Set up Currency")]
+        
         public System.String CurTo { get; set; }
 
+        [Comment("To Set up Currency")]
+        [Comment("To Set up Currency")]
+        [Comment("To Set up Currency")]
         public static void RunAction(DemoScript Data)
         {
-            
+            SAPTestHelper.Current.SAPGuiSession.FindById("wnd[0]").ThrowNotFoundError("Can't found window wnd[0]").OfType<GuiFrameWindow>().SendVKey(0);
             SAPTestHelper.Current.SAPGuiSession.FindById<GuiOkCodeField>("wnd[0]/tbar[0]/okcd").Text = "se16";
             SAPTestHelper.Current.SAPGuiSession.FindById<GuiMainWindow>("wnd[0]").SendVKey(0);
             SAPTestHelper.Current.SAPGuiSession.FindById<GuiCTextField>("wnd[0]/usr/ctxtDATABROWSE-TABLENAME").Text = "TCURR";
