@@ -21,6 +21,9 @@ namespace SAPScriptTemplate
 
             
             SAPTestHelper.Current.SetSession();
+
+            SAPTestHelper.Current.SAPGuiSession.StartTransaction("VA01");
+
             SAPTestHelper.Current.SAPGuiSession.StartRequest += (s) => {
                 SAPTestHelper.Current.TakeScreenShot(SAPTestHelper.Current.ScreenDatas.Count.ToString() + ".jpg");
                 Console.WriteLine(SAPTestHelper.Current.ScreenDatas.Count);
