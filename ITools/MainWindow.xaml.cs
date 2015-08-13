@@ -18,7 +18,6 @@ using ITools.ViewModel;
 using SAPFEWSELib;
 using System.Data;
 using SAPAutomation;
-using SAPAutomation.Extension;
 
 namespace ITools
 {

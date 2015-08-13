@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SAPAutomation.Extension;
 using SAPAutomation.Framework.Attributes;
 using SAPAutomation.Interfaces;
 using System.Data;
@@ -19,8 +18,8 @@ namespace SAPScriptTemplate
     {
         static void Main(string[] args)
         {
-            
 
+            
             SAPTestHelper.Current.SetSession();
             SAPTestHelper.Current.SAPGuiSession.StartRequest += (s) => {
                 SAPTestHelper.Current.TakeScreenShot(SAPTestHelper.Current.ScreenDatas.Count.ToString() + ".jpg");
