@@ -26,7 +26,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>\\c1w13041.itcs.hp.com\ShareFolder\</InstallUrl>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>8</ApplicationRevision>
+    <ApplicationRevision>10</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -118,6 +118,9 @@
     <Compile Include="Windows\ModuleWindow.xaml.cs">
       <DependentUpon>ModuleWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows\SAPLogView.xaml.cs">
+      <DependentUpon>SAPLogView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows\ScriptWin.xaml.cs">
       <DependentUpon>ScriptWin.xaml</DependentUpon>
     </Compile>
@@ -151,6 +154,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows\ModuleWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\SAPLogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

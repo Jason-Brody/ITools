@@ -1,0 +1,32 @@
+﻿<Window x:Class="ITools.Windows.SAPLogView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SAPLogView" Height="300" Width="300">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <ListView x:Name="lv" SelectionChanged="lv_SelectionChanged" ItemsSource="{Binding}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Screen Number" DisplayMemberBinding="{Binding ScreenNumber}">
+             
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Canvas Grid.Column="1">
+            <Image x:Name="img"  Canvas.Top="0"/>
+            <Rectangle x:Name="rect" Fill="Transparent" Stroke="Red" StrokeThickness="3" />
+        </Canvas>
+        <ListView x:Name="lv_Details" ItemsSource="{Binding ElementName=lv,Path=SelectedItem.SAPGuiElements}" Grid.Column="2" SelectionChanged="lv_Details_SelectionChanged">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Component Name" DisplayMemberBinding="{Binding Name}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>
