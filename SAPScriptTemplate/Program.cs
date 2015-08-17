@@ -18,8 +18,8 @@ namespace SAPScriptTemplate
     {
         static void Main(string[] args)
         {
-            
 
+            
             SAPTestHelper.Current.SetSession();
 
             SAPTestHelper.Current.SAPGuiSession.StartTransaction("VA01");
