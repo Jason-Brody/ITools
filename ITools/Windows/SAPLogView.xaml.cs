@@ -22,14 +22,19 @@ namespace ITools.Windows
     {
         ScreenData sc = null;
 
-        string folder = @"C:\Users\yanzhou\Documents\GitHub\SAPGuiAutomationLib\SAPGuiAutomationLib.Console\bin\Debug\";
+        string folder = @"C:\Demo\";
 
         public SAPLogView()
         {
             InitializeComponent();
+            
+        }
+
+        private void load()
+        {
             List<ScreenData> datas = null;
             System.Xml.Serialization.XmlSerializer xs = new System.Xml.Serialization.XmlSerializer(typeof(List<ScreenData>));
-            using(System.IO.FileStream fs = new System.IO.FileStream(folder+"1.xml",System.IO.FileMode.Open))
+            using (System.IO.FileStream fs = new System.IO.FileStream(folder + "1.xml", System.IO.FileMode.Open))
             {
                 datas = xs.Deserialize(fs) as List<ScreenData>;
             }
@@ -63,6 +68,18 @@ namespace ITools.Windows
                 Canvas.SetLeft(rect, se.AbsoluteLeft);
             }
             
+        }
+
+        private void btn_Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                load();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }

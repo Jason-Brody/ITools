@@ -418,5 +418,11 @@ namespace ITools
             //var code = CodeHelper.GetCode(cns, p => p.GenerateCodeFromNamespace).ToString();
 
         }
+
+        private void btn_ShowLog_Click(object sender, RoutedEventArgs e)
+        {
+            SAPLogView slv = new SAPLogView();
+            slv.Show();
+        }
     }
 }

@@ -8,6 +8,10 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
         <ListView x:Name="lv" SelectionChanged="lv_SelectionChanged" ItemsSource="{Binding}">
             <ListView.View>
                 <GridView>
@@ -28,5 +32,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
+        
+        <Button Grid.Row="1" Grid.ColumnSpan="3" Content="Refresh" x:Name="btn_Refresh" Click="btn_Refresh_Click"/>
     </Grid>
 </Window>

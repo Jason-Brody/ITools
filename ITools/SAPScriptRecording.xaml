@@ -40,6 +40,7 @@
         <StackPanel Orientation="Horizontal" Margin="0,5" Grid.Column="1">
             <Button Content="Start Recording" x:Name="btn_Record" Click="btn_Record_Click"/>
             <Button Content="Stop Recording" x:Name="btn_Stop" Click="btn_Stop_Click"/>
+            <Button Content="View Log" x:Name="btn_ShowLog" Click="btn_ShowLog_Click"/>
             <!--<Button Content="Run All Steps" x:Name="btn_Run" Click="btn_Run_Click"/>-->
         </StackPanel>
         <TabControl Grid.Row="1" Grid.Column="1">
