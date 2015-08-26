@@ -37,6 +37,7 @@ namespace ITools
         {
             InitializeComponent();
             (App.Current.MainWindow as MainWindow).OnSetSession += SAPComponents_OnSetSession;
+            _maxCount = 20;
             this.IsEnabled = false;
         }
 
@@ -59,13 +60,13 @@ namespace ITools
         void _session_Destroy(GuiSession Session)
         {
             this.Dispatcher.BeginInvoke(new Action(() => { this.IsEnabled = false; }));
-            
+
         }
 
         private async void btn_ShowAll_Click(object sender, RoutedEventArgs e)
         {
             _lastHighlight = null;
-           
+
             try
             {
                 _isExpand = false;
@@ -76,7 +77,7 @@ namespace ITools
                 {
                     var comp = SAPAutomationHelper.Current.SAPGuiSession as GuiComponent;
                     //WrapComp comp = new WrapComp() { Comp = SAPAutomationHelper.Current.SAPGuiSession as GuiComponent };
-                    _maxCount = 20;
+
 
 
                     SAPAutomationHelper.Current.LoopSAPComponents<XmlElement>(comp, root, 0, _maxCount, addNode);
@@ -148,16 +149,19 @@ namespace ITools
                 //XmlElement rootCopy = root.Clone() as XmlElement;
                 string id = root.GetAttribute("id");
                 GuiComponent cp = SAPAutomationHelper.Current.GetSAPComponentById<GuiComponent>(id);
-                
+
+                if (root.ChildNodes.Count == 1)
+                {
+                    root.RemoveChild(root.FirstChild);
+                }
+
                 SAPAutomationHelper.Current.LoopSAPComponents<XmlElement>(cp, root, root.ChildNodes.Count, _maxCount, addNode);
                 root = tv_Elements.SelectedItem as XmlElement;
                 var lastNode = root.LastChild.Clone();
                 root.RemoveChild(root.LastChild);
                 int count = lastNode.ChildNodes.Count;
-                int abc = 0;
                 for (int i = 0; i < count; i++)
                 {
-                    abc++;
                     root.AppendChild(lastNode.ChildNodes[0]);
                 }
 
@@ -169,8 +173,8 @@ namespace ITools
             if (tv_Elements.SelectedItem != null)
             {
                 XmlElement root = tv_Elements.SelectedItem as XmlElement;
-                int count = int.Parse( root.GetAttribute("num"));
-                if(count > root.ChildNodes.Count)
+                int count = int.Parse(root.GetAttribute("num"));
+                if (count > root.ChildNodes.Count)
                 {
                     mi_Load.IsEnabled = true;
                 }
@@ -181,7 +185,7 @@ namespace ITools
             }
             else
                 mi_Load.IsEnabled = false;
-                
+
 
         }
 
@@ -227,7 +231,7 @@ namespace ITools
                 //XmlElement rootCopy = root.Clone() as XmlElement;
                 string id = root.GetAttribute("id");
                 GuiComponent cp = SAPAutomationHelper.Current.GetSAPComponentById<GuiComponent>(id);
-               
+
                 displayData(cp);
             }
         }
@@ -235,58 +239,61 @@ namespace ITools
 
         private void displayData(GuiComponent c)
         {
-            Type detailType = null; GuiShell shellObj = null;
-            if (c.Type.ToLower().Contains("shell"))
+            string type = c.GetDetailType();
+
+            Type t = SAPAutomationHelper.Current.GetSAPTypeInfo(type);
+            //Type detailType = null; GuiShell shellObj = null;
+            //if (c.Type.ToLower().Contains("shell"))
+            //{
+            //    shellObj = c as GuiShell;
+            //    if (shellObj != null)
+            //    {
+            //        foreach (Type t in SAPAutomationHelper.Current.SAPGuiApiAssembly.GetTypes().Where(tp => tp.IsInterface))
+            //        {
+            //            if (t.Name.Contains("Gui" + shellObj.SubType))
+            //            {
+            //                detailType = t;
+            //                break;
+            //            }
+            //        }
+            //    }
+            //}
+
+            //string typeName = detailType == null ? c.Type : detailType.Name;
+
+            //var props = SAPAutomationHelper.Current.GetSAPTypeInfoes<PropertyInfo>(typeName, t => t.GetProperties().Where(p => p.IsSpecialName == false));
+
+            List<SAPElementProperty> pps = new List<SAPElementProperty>();
+            foreach (var p in t.GetProperties().Where(p => p.IsSpecialName == false))
             {
-                shellObj = c as GuiShell;
-                if (shellObj != null)
+                SAPElementProperty prop = new SAPElementProperty();
+                prop.Name = p.Name;
+                prop.IsReadOnly = !p.CanWrite;
+                try
                 {
-                    foreach (Type t in SAPAutomationHelper.Current.SAPGuiApiAssembly.GetTypes().Where(tp => tp.IsInterface))
-                    {
-                        if (t.Name.Contains("Gui" + shellObj.SubType))
-                        {
-                            detailType = t;
-                            break;
-                        }
-                    }
+                    prop.Value = p.GetValue(c).ToString();
                 }
+                catch
+                {
+                    prop.Value = "";
+                }
+                pps.Add(prop);
             }
-
-            string typeName = detailType == null ? c.Type : detailType.Name;
-
-            var props = SAPAutomationHelper.Current.GetSAPTypeInfoes<PropertyInfo>(typeName, t => t.GetProperties().Where(p => p.IsSpecialName == false));
+            List<string> mds = getMethods(t);
+            lv_Props.Dispatcher.BeginInvoke(new Action(() =>
             {
-                List<SAPElementProperty> pps = new List<SAPElementProperty>();
-                foreach (var p in props)
-                {
-                    SAPElementProperty prop = new SAPElementProperty();
-                    prop.Name = p.Name;
-                    prop.IsReadOnly = !p.CanWrite;
-                    try
-                    {
-                        prop.Value = p.GetValue(c).ToString();
-                    }
-                    catch
-                    {
-                        prop.Value = "";
-                    }
-                    pps.Add(prop);
-                }
-                List<string> mds = getMethods(typeName);
-                lv_Props.Dispatcher.BeginInvoke(new Action(() =>
-                {
-                    lv_Props.DataContext = pps;
-                    lv_Methods.DataContext = mds;
-                }));
+                lv_Props.DataContext = pps;
+                lv_Methods.DataContext = mds;
+            }));
 
-            }
+
         }
 
-        private List<string> getMethods(string typeName)
+        private List<string> getMethods(Type t)
         {
             List<string> methods = new List<string>();
-            var ms = SAPAutomationHelper.Current.GetSAPTypeInfoes<MethodInfo>(typeName, t => t.GetMethods().Where(m => m.IsSpecialName == false));
-            foreach (var m in ms)
+            //var ms = SAPAutomationHelper.Current.GetSAPTypeInfoes<MethodInfo>(typeName, t => t.GetMethods().Where(m => m.IsSpecialName == false));
+            foreach (var m in t.GetMethods().Where(m => m.IsSpecialName == false))
             {
                 string method = string.Empty;
                 method += m.ReturnType.Name + " " + m.Name;
@@ -327,10 +334,22 @@ namespace ITools
             {
                 displayData(c);
                 GuiComponent cp = c;
-                Stack<GuiComponent> comps = new Stack<GuiComponent>();
+                Stack<SAPCompoentBasicInfo> comps = new Stack<SAPCompoentBasicInfo>();
                 do
                 {
-                    comps.Push(cp);
+                    SAPCompoentBasicInfo info = new SAPCompoentBasicInfo();
+                    info.Comp = cp;
+                    info.ChildrenCount = 0;
+                    if (cp is GuiVContainer)
+                    {
+                        info.ChildrenCount = (cp as GuiVContainer).Children.Count;
+                    }
+                    if (cp is GuiContainer)
+                    {
+                        info.ChildrenCount = (cp as GuiContainer).Children.Count;
+                    }
+                    comps.Push(info);
+
                     cp = cp.Parent;
 
                 }
@@ -340,12 +359,14 @@ namespace ITools
                 XmlElement root = xDoc.CreateElement("Node");
                 root.SetAttribute("name", "root");
                 var firstComp = comps.Pop();
-                XmlElement temp = addNode(firstComp, root, 1);
+
+                XmlElement temp = addNode(firstComp.Comp, root, firstComp.ChildrenCount);
 
 
                 while (comps.Count > 0)
                 {
-                    temp = addNode(comps.Pop() , temp, 1);
+                    var comp = comps.Pop();
+                    temp = addNode(comp.Comp, temp, comp.ChildrenCount);
                 }
                 xDoc.AppendChild(root.FirstChild);
 
@@ -354,7 +375,7 @@ namespace ITools
                     tv_Elements.DataContext = xDoc;
                     SAPAutomationHelper.Current.SetVisualMode(false);
                     App.Current.MainWindow.WindowState = WindowState.Normal;
-                    
+
                 }));
 
 
@@ -383,11 +404,20 @@ namespace ITools
         private void btn_ScreenShot_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
-            if(sfd.ShowDialog()== System.Windows.Forms.DialogResult.OK)
+            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 string fileName = sfd.FileName;
                 SAPAutomationHelper.Current.TakeScreenShot(fileName);
             }
         }
+    }
+
+    public class SAPCompoentBasicInfo
+    {
+        public GuiComponent Comp { get; set; }
+
+        public int ChildrenCount { get; set; }
+
+        public int CurrentIndex { get; set; }
     }
 }

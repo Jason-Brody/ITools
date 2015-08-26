@@ -29,7 +29,7 @@ namespace SAPScriptTemplate
                 Console.WriteLine(SAPTestHelper.Current.ScreenDatas.Count);
             };
             //Console.ReadLine();
-            SAPTestHelper.Current.TurnScreenLog(true);
+            //SAPTestHelper.Current.TurnScreenLog(true);
             SAPTestHelper.Current.SAPGuiSession.EndTransaction();
 
             DemoScript script = new DemoScript();
@@ -38,7 +38,7 @@ namespace SAPScriptTemplate
             script.RateType = "M";
             DemoScript.RunAction(script);
 
-            SAPTestHelper.Current.TurnScreenLog(false);
+            //SAPTestHelper.Current.TurnScreenLog(false);
             var screen = SAPTestHelper.Current.ScreenDatas;
             XmlSerializer xs = new XmlSerializer(typeof(List<ScreenData>));
             using (FileStream fs = new FileStream("test.xml", FileMode.Create))

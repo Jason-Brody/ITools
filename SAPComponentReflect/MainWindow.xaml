@@ -1,0 +1,80 @@
+﻿<Window x:Class="SAPComponentReflect.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:cv="clr-namespace:SAPComponentReflect.Converters"
+        Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+        <cv:AssemblyComponentsConverter x:Key="AssemblyComponentsConverter"/>
+        <cv:ComponentMembersConverter x:Key="ComponentMembersConverter"/>
+        <cv:ColorBoolenConverter x:Key="ColorBoolenConverter"/>
+        <Style TargetType="{x:Type RadioButton}">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style TargetType="{x:Type ListViewItem}" x:Key="parameterStyle">
+            <Setter Property="Background" Value="{Binding Item2,Converter={StaticResource ColorBoolenConverter}}"/>
+        </Style>
+        
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Assemblies"/>
+            <Button Content="Add Assembly" x:Name="btn_Add" Click="btn_Add_Click" Margin="10"/>
+        </StackPanel>
+        
+        <ListView Grid.Row="1" x:Name="lv_Assembly" ItemsSource="{Binding}" DisplayMemberPath="FullName">
+            
+        </ListView>
+        
+        <TextBlock Grid.Column="1" Text="SAP Components"/>
+        
+        <ListView Grid.Row="1" Grid.Column="1" x:Name="lv_Components"
+                  DataContext="{Binding ElementName=lv_Assembly,Path=SelectedItem,Converter={StaticResource AssemblyComponentsConverter}}"
+                  ItemsSource="{Binding}" DisplayMemberPath="Name">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Add to Selected Items" x:Name="mi_Add" Click="mi_Add_Click"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
+        
+        <TextBlock Grid.Column="2" Text="Methods/Properties"></TextBlock>
+        <ListView Grid.Row="1" Grid.Column="2" x:Name="lv_Members" ItemsSource="{Binding}" DisplayMemberPath="Item1"
+                  ItemContainerStyle="{StaticResource parameterStyle}"
+                  DataContext="{Binding ElementName=lv_Components,Path=SelectedItem,Converter={StaticResource ComponentMembersConverter}}">
+                   
+        </ListView>
+        
+        <GroupBox Grid.Row="2" Grid.ColumnSpan="3" Header="Selected Components">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ListView x:Name="lv_SelectedComponents" ItemsSource="{Binding}">
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Remove" x:Name="mi_Remove" Click="mi_Remove_Click"/>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                </ListView>
+                <StackPanel Grid.Column="1">
+                    <RadioButton Content="Share Table" GroupName="1" IsChecked="True"/>
+                    <RadioButton Content="Private Table" GroupName="1"/>
+                    <Button Content="Create Excel" x:Name="btn_Create" Click="btn_Create_Click"
+                            HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="30,30,0,0"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>
