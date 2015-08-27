@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITools", "ITools\ITools.csproj", "{7546E549-8A67-42A4-9AB2-FDCD426CFD26}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAPScriptTemplate", "SAPScriptTemplate\SAPScriptTemplate.csproj", "{72D5A9B7-594F-463D-A7EB-8A3717272509}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SAPComponentReflect", "SAPComponentReflect\SAPComponentReflect.csproj", "{BCCA9BD1-AB25-466E-B056-3838109A7D4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BatchComponentsCatch", "BatchComponentsCatch\BatchComponentsCatch.csproj", "{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +51,18 @@ Global
 		{BCCA9BD1-AB25-466E-B056-3838109A7D4E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{BCCA9BD1-AB25-466E-B056-3838109A7D4E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{BCCA9BD1-AB25-466E-B056-3838109A7D4E}.Release|x86.ActiveCfg = Release|Any CPU
+		{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}.Debug|x86.Build.0 = Debug|Any CPU
+		{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}.Release|x86.ActiveCfg = Release|Any CPU
+		{6EDBBBDA-6FED-444A-9D25-D8E5A98951A7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

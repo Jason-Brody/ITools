@@ -1,0 +1,32 @@
+﻿<Window x:Class="BatchComponentsCatch.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BatchComponentsCatch"
+        mc:Ignorable="d"  
+        x:Name="this"
+        AllowsTransparency="True" WindowStyle="None"
+        WindowState="Maximized"
+        Topmost="True"
+        Background="Gray"
+        Opacity="0.5"
+        Title="MainWindow" Height="350" Width="525">
+    
+    <Canvas
+        x:Name="cv"
+        Background="Transparent"
+        Width="{Binding ElementName=this,Path=ActualWidth}"
+            Height="{Binding ElementName=this,Path=ActualHeight}"
+        PreviewMouseLeftButtonDown="Canvas_MouseLeftButtonDown"
+        MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
+        MouseMove="Canvas_MouseMove">
+
+        
+        
+        <Rectangle 
+            Fill="White" 
+            x:Name="rect" Width="0" Height="0" Stroke="Red" StrokeThickness="1"/>
+        
+    </Canvas>
+</Window>
