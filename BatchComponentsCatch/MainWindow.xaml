@@ -3,30 +3,56 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cv="clr-namespace:BatchComponentsCatch.Converters"
         xmlns:local="clr-namespace:BatchComponentsCatch"
         mc:Ignorable="d"  
         x:Name="this"
         AllowsTransparency="True" WindowStyle="None"
-        WindowState="Maximized"
+        
         Topmost="True"
-        Background="Gray"
-        Opacity="0.5"
-        Title="MainWindow" Height="350" Width="525">
-    
+        
+        Opacity="0.6"
+        Title="MainWindow" Height="350" Width="525" Background="Transparent">
+    <Window.Resources>
+        <cv:RectConverter x:Key="RectConverter"/>
+    </Window.Resources>
     <Canvas
         x:Name="cv"
         Background="Transparent"
         Width="{Binding ElementName=this,Path=ActualWidth}"
             Height="{Binding ElementName=this,Path=ActualHeight}"
-        PreviewMouseLeftButtonDown="Canvas_MouseLeftButtonDown"
+        
         MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
+        MouseLeftButtonUp="cv_MouseLeftButtonUp"
         MouseMove="Canvas_MouseMove">
 
-        
-        
+
+        <Path Fill="#FF40403E" Stroke="Blue">
+            <Path.Data>
+                <GeometryGroup>
+                    <RectangleGeometry x:Name="rectG_Screen">
+                        <RectangleGeometry.Rect>
+                            <MultiBinding Converter="{StaticResource RectConverter}">
+                                <Binding ElementName="this" Path="ActualWidth"/>
+                                <Binding ElementName="this" Path="ActualHeight"/>
+                            </MultiBinding>
+                        </RectangleGeometry.Rect>
+                    </RectangleGeometry>
+                    <RectangleGeometry x:Name="rectG_Area" Rect="0,0,0,0"></RectangleGeometry>
+                </GeometryGroup>
+            </Path.Data>
+        </Path>
+
         <Rectangle 
-            Fill="White" 
-            x:Name="rect" Width="0" Height="0" Stroke="Red" StrokeThickness="1"/>
-        
+            Opacity="0.1" Fill="White"
+            x:Name="rect" Width="0" Height="0"  StrokeThickness="1"/>
+
+        <StackPanel Canvas.Right="50" Canvas.Bottom="50">
+            <TextBlock  x:Name="tb" Text="Counts" Foreground="White"/>
+            <TextBlock x:Name="X1" Foreground="White"/>
+            <TextBlock x:Name="Y1" Foreground="White"/>
+            <TextBlock x:Name="X2" Foreground="White"/>
+            <TextBlock x:Name="Y2" Foreground="White"/>
+        </StackPanel>
     </Canvas>
 </Window>
