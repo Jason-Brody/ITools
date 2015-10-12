@@ -57,7 +57,9 @@ namespace ITools
 
         private void showSessionInfo(GuiSession Session)
         {
-            var props = SAPAutomationHelper.Current.GetSAPTypeInfoes<PropertyInfo>("GuiSessionInfo", t => t.GetProperties().Where(p => p.IsSpecialName == false));
+         
+            var props =SAPAutomationHelper.Current.GetSAPTypeInfo("GuiSessionInfo").GetProperties().Where(p => p.IsSpecialName == false);
+            //var props = SAPAutomationHelper.Current.GetSAPTypeInfoes<PropertyInfo>("GuiSessionInfo", t => t.GetProperties().Where(p => p.IsSpecialName == false));
             var sessionInfo = from p in props
                               select new { Name = p.Name, Value = p.GetValue(Session.Info) };
             var sis = sessionInfo.ToList();

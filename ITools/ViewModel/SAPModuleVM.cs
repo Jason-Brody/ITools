@@ -1,5 +1,4 @@
-﻿using SAPAutomation.Framework;
-using SAPAutomation.Framework.Attributes;
+﻿
 using SAPGuiAutomationLib;
 using System;
 using System.Collections.Generic;
@@ -9,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace ITools.ViewModel
 {
-    public class SAPModuleVM:SAPModuleAttribute
-    {
-        public bool IsSet { get; set; }
-    }
+    //public class SAPModuleVM:SAPModuleAttribute
+    //{
+    //    public bool IsSet { get; set; }
+    //}
 }

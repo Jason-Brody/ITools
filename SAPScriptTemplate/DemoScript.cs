@@ -1,6 +1,4 @@
 ﻿using SAPAutomation;
-using SAPAutomation.Framework.Attributes;
-using SAPAutomation.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +8,7 @@ using SAPFEWSELib;
 
 namespace SAPScriptTemplate
 {
-    [Comment("To Set up Currency")]
+   
     public class DemoScript 
     {
         /// Exchange Rate Type
@@ -18,17 +16,12 @@ namespace SAPScriptTemplate
         public System.String RateType { get; set; }
         /// From currency
 
-        [Comment("To Set up Currency")]
         public System.String CurFrom { get; set; }
         /// To-currency
        
-        [Comment("To Set up Currency")]
-        
+               
         public System.String CurTo { get; set; }
 
-        [Comment("To Set up Currency")]
-        [Comment("To Set up Currency")]
-        [Comment("To Set up Currency")]
         public static void RunAction(DemoScript Data)
         {
             SAPTestHelper.Current.SAPGuiSession.FindById("wnd[0]").ThrowNotFoundError("Can't found window wnd[0]").OfType<GuiFrameWindow>().SendVKey(0);

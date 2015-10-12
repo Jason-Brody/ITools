@@ -6,9 +6,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <Style TargetType="{x:Type TreeViewItem}">
+        <!--<Style TargetType="{x:Type TreeViewItem}">
             <Setter Property="IsExpanded" Value="{Binding XPath=@isExpand}"/>
-        </Style>
+        </Style>-->
         <Style TargetType="{x:Type Button}">
             <Setter Property="Margin" Value="5"/>
             <Setter Property="MinWidth" Value="50"/>

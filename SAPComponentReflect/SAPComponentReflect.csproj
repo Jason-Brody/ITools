@@ -37,6 +37,9 @@
     <Reference Include="SAPAutomation">
       <HintPath>..\..\SAPGuiAutomationLib\SAPAutomation\bin\Debug\SAPAutomation.dll</HintPath>
     </Reference>
+    <Reference Include="SAPTestFramework">
+      <HintPath>..\..\SAPGuiAutomationLib\SAPTestFramework\bin\Debug\SAPTestFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Forms" />

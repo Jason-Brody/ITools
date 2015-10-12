@@ -23,8 +23,6 @@ using System.Windows.Shapes;
 using System.Reflection.Emit;
 using System.Data;
 using System.Reflection;
-using SAPAutomation.Framework;
-using SAPAutomation.Framework.Attributes;
 
 
 namespace ITools
@@ -375,49 +373,49 @@ namespace ITools
             
         }
 
-        private void createModule(SAPModuleAttribute attribute)
-        {
-            //string actionClassName = attribute.Name;
-            //string dataClassName = actionClassName + "_Data";
+        //private void createModule(SAPModuleAttribute attribute)
+        //{
+        //    //string actionClassName = attribute.Name;
+        //    //string dataClassName = actionClassName + "_Data";
 
-            //CodeNamespace cns = new CodeNamespace("Test");
-            //CodeTypeDeclaration moduleClass = new CodeTypeDeclaration(actionClassName);
-            //moduleClass.IsClass = true;
-            //moduleClass.Attributes = MemberAttributes.Public;
-            //CodeMemberMethod method = new CodeMemberMethod();
-            //method.Name = "RunAction";
-            //method.Attributes = MemberAttributes.Public;
+        //    //CodeNamespace cns = new CodeNamespace("Test");
+        //    //CodeTypeDeclaration moduleClass = new CodeTypeDeclaration(actionClassName);
+        //    //moduleClass.IsClass = true;
+        //    //moduleClass.Attributes = MemberAttributes.Public;
+        //    //CodeMemberMethod method = new CodeMemberMethod();
+        //    //method.Name = "RunAction";
+        //    //method.Attributes = MemberAttributes.Public;
 
-            //bool hasParameter = false;
+        //    //bool hasParameter = false;
 
-            //List<SAPDataParameter> paras = new List<SAPDataParameter>();
-            //foreach (var step in steps)
-            //{
-            //    if (step.IsParameterize)
-            //    {
-            //        hasParameter = true;
-            //        paras.AddRange(step.ActionParams);
-            //        method.Statements.AddRange(step.GetCodeStatement("Data").ToArray());
+        //    //List<SAPDataParameter> paras = new List<SAPDataParameter>();
+        //    //foreach (var step in steps)
+        //    //{
+        //    //    if (step.IsParameterize)
+        //    //    {
+        //    //        hasParameter = true;
+        //    //        paras.AddRange(step.ActionParams);
+        //    //        method.Statements.AddRange(step.GetCodeStatement("Data").ToArray());
                     
-            //    }
-            //    else
-            //    {
-            //        method.Statements.AddRange(step.GetCodeStatement().ToArray());
-            //    }
-            //}
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        method.Statements.AddRange(step.GetCodeStatement().ToArray());
+        //    //    }
+        //    //}
 
-            //if (hasParameter)
-            //    method.Parameters.Add(new CodeParameterDeclarationExpression() { Type = new CodeTypeReference(dataClassName), Name = "Data" });
+        //    //if (hasParameter)
+        //    //    method.Parameters.Add(new CodeParameterDeclarationExpression() { Type = new CodeTypeReference(dataClassName), Name = "Data" });
 
-            //moduleClass.Members.Add(method);
-            //cns.Types.Add(moduleClass);
-            //var dataClass = SAPAutomationExtension.GetDataClass(dataClassName, paras, attribute);
-            //if (dataClass != null)
-            //    cns.Types.Add(dataClass);
+        //    //moduleClass.Members.Add(method);
+        //    //cns.Types.Add(moduleClass);
+        //    //var dataClass = SAPAutomationExtension.GetDataClass(dataClassName, paras, attribute);
+        //    //if (dataClass != null)
+        //    //    cns.Types.Add(dataClass);
 
-            //var code = CodeHelper.GetCode(cns, p => p.GenerateCodeFromNamespace).ToString();
+        //    //var code = CodeHelper.GetCode(cns, p => p.GenerateCodeFromNamespace).ToString();
 
-        }
+        //}
 
         private void btn_ShowLog_Click(object sender, RoutedEventArgs e)
         {
